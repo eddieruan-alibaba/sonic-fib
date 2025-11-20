@@ -8,7 +8,7 @@
 #include <cstdint>
 
 using namespace std;
-using namespace swss;
+using namespace fib;
 
 /* Constructor for multi-path NextHopGroupFull */
 NextHopGroupFull::NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in,

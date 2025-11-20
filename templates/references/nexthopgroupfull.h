@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <netinet/in.h>
 
-namespace swss {
+namespace fib {
 
     /* Can't be generated defintions */
     typedef std::uint32_t vrf_id_t;
@@ -152,4 +152,4 @@ namespace swss {
         ~NextHopGroupFull();
     };
 
-} // namespace swss
+} // namespace fib

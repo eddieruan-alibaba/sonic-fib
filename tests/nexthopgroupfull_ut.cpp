@@ -6,12 +6,11 @@
 
 #include <unistd.h>
 
-#include "common/logger.h"
-#include "common/nexthopgroup/nexthopgroupfull.h"
-#include "common/nexthopgroup/nexthopgroupfull_json.h"
+#include "src/nexthopgroupfull.h"
+#include "src/nexthopgroupfull_json.h"
 
 using namespace std;
-using namespace swss;
+using namespace fib;
 
 nh_grp_full make_nh_grp_full(uint32_t id, uint8_t weight, uint32_t num_direct) {
     return {id, weight, num_direct};

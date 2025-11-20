@@ -7,7 +7,7 @@
 #include <string>
 #include <arpa/inet.h> // for inet_ntop / inet_pton
 
-namespace swss {
+namespace fib {
 
 // --- IP Conversion Helpers ---
 inline std::string ipv4_to_string(const struct in_addr& addr) {
@@ -367,4 +367,4 @@ inline bool from_json_string(std::string& json_str, NextHopGroupFull& out_obj) {
     }
 }
 
-} // namespace swss
+} // namespace fib

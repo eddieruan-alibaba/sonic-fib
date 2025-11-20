@@ -1,7 +1,7 @@
 // nexthopgroup_capi.cpp
 
-#include "common/nexthopgroup/nexthopgroupfull.h"
-#include "common/nexthopgroup/nexthopgroupfull_json.h"
+#include "src/nexthopgroupfull.h"
+#include "src/nexthopgroupfull_json.h"
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -9,7 +9,7 @@
 
 
 // Optional: bring into global scope for convenience
-using NextHopGroupFull = swss::NextHopGroupFull;
+using NextHopGroupFull = fib::NextHopGroupFull;
 
 // Declare C-compatible API directly (no need for header here)
 extern "C" {

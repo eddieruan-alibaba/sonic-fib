@@ -54,7 +54,7 @@ lib_LTLIBRARIES += src/libnexthopgroup.la
 
 src_libnexthopgroup_la_SOURCES = \
     src/nexthopgroupfull.cpp      \
-    src/c-api/nexthopgroup/nexthopgroup_capi.cpp
+    src/c-api/nexthopgroup_capi.cpp
 
 # Install headers to a dedicated subdir
 nexthopgroup_headerdir = $(includedir)/nexthopgroup
@@ -65,7 +65,7 @@ nexthopgroup_header_HEADERS = \
 # Install C-API headers
 nexthopgroup_capi_headerdir = $(includedir)/nexthopgroup/c-api
 nexthopgroup_capi_header_HEADERS = \
-    src/c-api/nexthopgroup/nexthopgroup_capi.h
+    src/c-api/nexthopgroup_capi.h
 
 src_libnexthopgroup_la_CXXFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CODE_COVERAGE_CXXFLAGS)
 src_libnexthopgroup_la_CPPFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CODE_COVERAGE_CPPFLAGS)

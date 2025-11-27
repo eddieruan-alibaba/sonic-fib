@@ -40,15 +40,20 @@
       "default_value" : "\"\"",
       "description": "Interface name"
     },
-    "depends": {
+    "nh_grp_full_list": {
       "position" : 2,
       "type": "array",
       "items": { "$ref": "#/$defs/nh_grp_full" }
     },
+    "depends": {
+      "position" : 2,
+      "type": "array",
+      "items": { "type": "integer", "minimum": 0 }
+    },
     "dependents": {
       "position" : 2,
       "type": "array",
-      "items": { "$ref": "#/$defs/nh_grp_full" }
+      "items": { "type": "integer", "minimum": 0 }
     },
     "type": {
       "position" : 3,

@@ -115,8 +115,9 @@ namespace fib {
 
     #define NEXTHOP_FLAG_ONLINK (1 << 3)
         std::string ifname  = "";
-        std::vector<struct nh_grp_full> depends ;
-        std::vector<struct nh_grp_full> dependents ;
+        std::vector<struct nh_grp_full> nh_grp_full_list ;
+        std::vector<std::uint32_t> depends ;
+        std::vector<std::uint32_t> dependents ;
 
         char _hash_begin[0];
         enum nexthop_types_t type  = NEXTHOP_TYPE_INVALID;
@@ -137,8 +138,9 @@ namespace fib {
 
         // Constructors
         NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in,
-                         const std::vector<nh_grp_full>& depends_in,
-                         const std::vector<nh_grp_full>& dependents_in);
+                         const std::vector<nh_grp_full>& nh_grp_full_list_in,
+                         const std::vector<uint32_t>& depends_in,
+                         const std::vector<uint32_t>& dependents_in);
 
         NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in, enum nexthop_types_t type_in,
                          vrf_id_t vrf_id_in, ifindex_t ifindex_in, std::string ifname_in,
@@ -148,6 +150,9 @@ namespace fib {
                          const struct nexthop_srv6* nh_srv6_in,
                          const struct seg6_seg_stack* nh_seg6_segs_in,
                          const std::vector<struct in6_addr>& nh_segs_in);
+
+        // Copy assignment operator
+        NextHopGroupFull& operator = (const NextHopGroupFull &other);
 
         ~NextHopGroupFull();
     };

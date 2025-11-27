@@ -91,8 +91,9 @@ namespace fib {
 
         // Constructors
         NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in,
-                         const std::vector<nh_grp_full>& depends_in,
-                         const std::vector<nh_grp_full>& dependents_in);
+                         const std::vector<nh_grp_full>& nh_grp_full_list_in,
+                         const std::vector<uint32_t>& depends_in,
+                         const std::vector<uint32_t>& dependents_in);
 
         NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in, enum nexthop_types_t type_in,
                          vrf_id_t vrf_id_in, ifindex_t ifindex_in, std::string ifname_in,
@@ -102,6 +103,9 @@ namespace fib {
                          const struct nexthop_srv6* nh_srv6_in,
                          const struct seg6_seg_stack* nh_seg6_segs_in,
                          const std::vector<struct in6_addr>& nh_segs_in);
+
+        // Copy assignment operator
+        NextHopGroupFull& operator = (const NextHopGroupFull &other);
 
         ~NextHopGroupFull();
     };

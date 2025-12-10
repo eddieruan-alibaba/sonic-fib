@@ -97,6 +97,7 @@ namespace fib {
 
         NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in, enum nexthop_types_t type_in,
                          vrf_id_t vrf_id_in, ifindex_t ifindex_in, std::string ifname_in,
+                         const std::vector<uint32_t>& dependents_in,
                          enum lsp_types_t label_type_in, enum blackhole_type bh_type_in,
                          union g_addr gateway_in, union g_addr src_in, union g_addr rmap_src_in,
                          std::uint8_t weight_in, std::uint8_t flags_in, bool has_srv6, bool has_seg6_segs,

@@ -29,15 +29,16 @@ NextHopGroupFull::NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in,
 /* Constructor for singleton NextHopGroupFull */
 NextHopGroupFull::NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in,
                 enum nexthop_types_t type_in, vrf_id_t vrf_id_in, ifindex_t ifindex_in,
-                std::string ifname_in, enum lsp_types_t label_type_in, enum blackhole_type bh_type_in,
+                std::string ifname_in, const std::vector<uint32_t>& dependents_in,
+                enum lsp_types_t label_type_in, enum blackhole_type bh_type_in,
                 union g_addr gateway_in, union g_addr src_in, union g_addr rmap_src_in,
                 std::uint8_t weight_in, std::uint8_t flags_in, bool has_srv6, bool has_seg6_segs,
                 const struct nexthop_srv6* nh_srv6_in,
                 const struct seg6_seg_stack* nh_seg6_segs_in,
                 const std::vector<struct in6_addr>& nh_segs_in)
     : id(id_in), key(key_in), weight(weight_in), flags(flags_in), ifname(ifname_in),
-      type(type_in), vrf_id(vrf_id_in), ifindex(ifindex_in), nh_label_type(label_type_in),
-      src(src_in), rmap_src(rmap_src_in), nh_srv6(nullptr)
+      dependents(dependents_in), type(type_in), vrf_id(vrf_id_in), ifindex(ifindex_in),
+      nh_label_type(label_type_in), src(src_in), rmap_src(rmap_src_in), nh_srv6(nullptr)
 {
     //SWSS_LOG_DEBUG("NextHopGroupFull construction started (singleton)");
     cout << "[CPP DEBUG] NextHopGroupFull construction started (singleton)" << endl;

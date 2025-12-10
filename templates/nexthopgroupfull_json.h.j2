@@ -60,59 +60,43 @@ inline void from_json(const nlohmann::json& j, {{ enum_name }}& e) {
 }
 {%- endfor %}
 
-// --- nh_grp_full ---
-inline void to_json(nlohmann::json& j, const nh_grp_full& n) {
-    j = nlohmann::json{
-        {"id", n.id},
-        {"weight", n.weight},
-        {"num_direct", n.num_direct}
-    };
-}
-inline void from_json(const nlohmann::json& j, nh_grp_full& n) {
-    j.at("id").get_to(n.id);
-    j.at("weight").get_to(n.weight);
-    j.at("num_direct").get_to(n.num_direct);
-}
+/* ======== AUTO-GEN each sub structs ======== */
+// Add declaration for each generating func
 
-// --- seg6local_flavors_info ---
-inline void to_json(nlohmann::json& j, const seg6local_flavors_info& f) {
-    j = nlohmann::json{
-        {"flv_ops", f.flv_ops},
-        {"lcblock_len", f.lcblock_len},
-        {"lcnode_func_len", f.lcnode_func_len}
-    };
-}
-inline void from_json(const nlohmann::json& j, seg6local_flavors_info& f) {
-    j.at("flv_ops").get_to(f.flv_ops);
-    j.at("lcblock_len").get_to(f.lcblock_len);
-    j.at("lcnode_func_len").get_to(f.lcnode_func_len);
-}
+{%- for struct_name, struct_info in all_structs.items() %}
+{%- if struct_name not in special_structs %}
 
-// --- seg6local_context ---
-inline void to_json(nlohmann::json& j, const seg6local_context& ctx) {
+// --- {{struct_name}} ---
+inline void to_json(nlohmann::json& j, const {{struct_name}}& obj) {
     j = nlohmann::json{
-        {"nh4", ipv4_to_string(ctx.nh4)},
-        {"nh6", ipv6_to_string(ctx.nh6)},
-        {"table", ctx.table},
-        {"flv", ctx.flv},
-        {"block_len", ctx.block_len},
-        {"node_len", ctx.node_len},
-        {"function_len", ctx.function_len},
-        {"argument_len", ctx.argument_len}
+        {%- for field in struct_info.fields %}
+        {%- if field.name == "nh4" %}
+        {"{{field.name}}", ipv4_to_string(obj.nh4)},
+        {%- elif field.name == "nh6" %}
+        {"{{field.name}}", ipv6_to_string(obj.nh6)},
+        {%- else %}
+        {"{{field.name}}", obj.{{field.name}}},
+        {%- endif %}
+        {%- endfor %}
     };
 }
-inline void from_json(const nlohmann::json& j, seg6local_context& ctx) {
+inline void from_json(const nlohmann::json& j, {{struct_name}}& obj) {
+    {%- for field in struct_info.fields %}
+    {%- if field.name == "nh4" %}
     std::string nh4_str = j.at("nh4");
+    string_to_ipv4(nh4_str, obj.nh4);
+    {%- elif field.name == "nh6" %}
     std::string nh6_str = j.at("nh6");
-    string_to_ipv4(nh4_str, ctx.nh4);
-    string_to_ipv6(nh6_str, ctx.nh6);
-    j.at("table").get_to(ctx.table);
-    j.at("flv").get_to(ctx.flv);
-    j.at("block_len").get_to(ctx.block_len);
-    j.at("node_len").get_to(ctx.node_len);
-    j.at("function_len").get_to(ctx.function_len);
-    j.at("argument_len").get_to(ctx.argument_len);
+    string_to_ipv6(nh6_str, obj.nh6);
+    {%- else %}
+    j.at("{{field.name}}").get_to(obj.{{field.name}});
+    {%- endif %}
+    {%- endfor %}
 }
+
+{%- endif %}
+{%- endfor %}
+
 
 // --- seg6_seg_stack ---
 inline void to_json(nlohmann::json& j, const seg6_seg_stack* stack) {
@@ -169,59 +153,51 @@ inline void from_json(const nlohmann::json& j, nexthop_srv6*& srv6) {
     j.at("seg6_segs").get_to(srv6->seg6_segs);
 }
 
-// --- NextHopGroupFull ---
-inline void to_json(nlohmann::json& j, const {{ root_struct_name }}& nh) {
+// --- {{root_struct_name}} ---
+inline void to_json(nlohmann::json& j, const {{root_struct_name}}& nh) {
     j = nlohmann::json{
-        {"id", nh.id},
-        {"key", nh.key},
-        {"weight", nh.weight},
-        {"flags", nh.flags},
-        {"ifname", nh.ifname},
-        {"depends", nh.depends},
-        {"dependents", nh.dependents},
-        {"type", nh.type},
-        {"vrf_id", nh.vrf_id},
-        {"ifindex", nh.ifindex},
-        {"nh_label_type", nh.nh_label_type},
-        {"gateway", gaddr_to_string(nh.gate, nh.type)},
-        {"src", gaddr_to_string(nh.src, nh.type)},
-        {"rmap_src", gaddr_to_string(nh.rmap_src, nh.type)},
-        {"nh_srv6", nh.nh_srv6}
+        {%- for field in root_struct.fields %}
+        {%- if field.name == "bh_type" %}
+        {%- elif field.name == "nh_srv6" %}
+        {%- elif field.name in ["gate", "src", "rmap_src"] %}
+        {"{{ field.name }}", gaddr_to_string(nh.{{ field.name }}, nh.type)},
+        {%- else %}
+        {"{{ field.name }}", nh.{{ field.name }}},
+        {%- endif %}
+        {%- endfor %}
     };
+
+    // deal with the bh_type
     if (nh.type == NEXTHOP_TYPE_BLACKHOLE) {
         j["bh_type"] = nh.bh_type;
     }
+
+    // deal with the nh_srv6
+    if (nh.nh_srv6) {
+        j["nh_srv6"] = nh.nh_srv6;
+    } else {
+        j["nh_srv6"] = nullptr;
+    }
 }
 inline void from_json(const nlohmann::json& j, {{ root_struct_name }}& nh) {
-    j.at("id").get_to(nh.id);
-    j.at("key").get_to(nh.key);
-    j.at("weight").get_to(nh.weight);
-    j.at("flags").get_to(nh.flags);
-    j.at("ifname").get_to(nh.ifname);
-    j.at("depends").get_to(nh.depends);
-    j.at("dependents").get_to(nh.dependents);
-    j.at("type").get_to(nh.type);
-    j.at("vrf_id").get_to(nh.vrf_id);
-    j.at("ifindex").get_to(nh.ifindex);
-    j.at("nh_label_type").get_to(nh.nh_label_type);
-
-    std::string gateway = j.at("gateway");
-    std::string src = j.at("src");
-    std::string rmap_src = j.at("rmap_src");
-    string_to_gaddr(gateway, nh.gate, nh.type);
-    string_to_gaddr(src, nh.src, nh.type);
-    string_to_gaddr(rmap_src, nh.rmap_src, nh.type);
-
-    nh.bh_type = BLACKHOLE_UNSPEC;
-    if (j.contains("bh_type") && nh.type == NEXTHOP_TYPE_BLACKHOLE) {
+    {%- for field in root_struct.fields %}
+    {%- if field.name in ["gate", "src", "rmap_src"] %}
+    std::string {{ field.name }}_str = j.at("{{ field.name }}");
+    string_to_gaddr({{ field.name }}_str, nh.{{ field.name }}, nh.type);
+    {%- elif field.name == "bh_type" %}
+    if (j.contains("bh_type")) {
         j.at("bh_type").get_to(nh.bh_type);
     }
-
+    {%- elif field.name == "nh_srv6" %}
     if (j.contains("nh_srv6")) {
         j.at("nh_srv6").get_to(nh.nh_srv6);
     } else {
         nh.nh_srv6 = nullptr;
     }
+    {%- else %}
+    j.at("{{ field.name }}").get_to(nh.{{ field.name }});
+    {%- endif %}
+    {%- endfor %}
 }
 
 // --- Top-level string helpers ---

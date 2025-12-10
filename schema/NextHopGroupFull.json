@@ -111,7 +111,7 @@
     "id", "key", "weight", "flags", "ifname",
     "depends", "dependents",
     "type", "vrf_id", "ifindex", "nh_label_type",
-    "gateway", "src", "rmap_src"
+    "gate", "src", "rmap_src"
   ],
   "additionalProperties": false,
 

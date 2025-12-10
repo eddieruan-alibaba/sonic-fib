@@ -88,7 +88,43 @@ def build_def_structs(defs):
                 else:
                     fields.append({"name": fname, "cpp_type": cpp_type})
             structs[name] = {"name": name, "fields": fields}
-    return structs
+    # return structs
+
+    # Now we have already build the structs dict,
+    # but more we need to do is to sort it.
+    # When we are using this dict to construct to/from_json in nexthopgroupfull_json.h.j2,
+    # an dependency issue among the structs will occur.
+    # Therefore, we sort it from non-depending ones to the complicated.
+
+    # Build the deps
+    deps = {}
+    for name, struct_info in structs.items():
+        deps[name] = set()
+        for field in struct_info.get("fields", []):
+            field_type = field.get("cpp_type", "")
+            # One's type is another struct indicating it's has dependency
+            for other_name in structs.keys():
+                if other_name != name and other_name in field_type:
+                    deps[name].add(other_name)
+
+    # Sort the dict by DFS topo
+    ordered = {}
+    visited = set()
+
+    def visit(name):
+        if name in visited:
+            return
+        visited.add(name)
+        # We access the deps first
+        for dep in deps[name]:
+            visit(dep)
+        # Then add self in
+        ordered[name] = structs[name]
+
+    for name in structs.keys():
+        visit(name)
+
+    return ordered
 
 
 def main():
@@ -142,7 +178,10 @@ def main():
         template_name = "nexthopgroupfull_json.h.j2"
         context = {
             "enums": enums,  # dict: name -> list of strings (e.g., ["NEXTHOP_TYPE_INVALID", ...])
-            "root_struct_name": root_struct_name
+            "root_struct_name": root_struct_name,
+            "root_struct": root_struct,
+            "special_structs": special_structs,
+            "all_structs": all_structs
         }
 
     # Render

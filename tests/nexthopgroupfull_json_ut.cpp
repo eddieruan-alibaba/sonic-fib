@@ -1,0 +1,164 @@
+#include <gtest/gtest.h>
+#include <arpa/inet.h>
+
+#include <iostream>
+#include <thread>
+
+#include <unistd.h>
+
+#include "src/nexthopgroupfull.h"
+#include "src/nexthopgroupfull_json.h"
+
+using namespace std;
+using namespace fib;
+
+TEST(EnumToJson, nexthop_type)
+{
+    cout << "TEST_EnumToJson::nexthop_type started: " << endl;
+    cout << "[DEBUG] Preparing values ..." << endl;
+    /* Prepare the value */
+    fib::nexthop_types_t test_val = NEXTHOP_TYPE_IPV4_IFINDEX;
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json function for enum nexthop_types_t ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << std::endl;
+    /* Check the value of constructed JSON */
+    cout << "[DEBUG] Checking JSON string values ..." << endl;
+    EXPECT_EQ(j, "NEXTHOP_TYPE_IPV4_IFINDEX");
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json function for enum nexthop_types_t ..." << endl;
+    fib::nexthop_types_t parsed_val;
+    fib::from_json(j, parsed_val);
+
+    /* Check the value of struct parsed from JSON */
+    cout << "[DEBUG] Checking STRUCT value parsed from JSON string ..." << endl;
+    EXPECT_EQ(parsed_val, test_val);
+
+    cout << "TEST_EnumToJson::nexthop_type finished." << endl;
+}
+
+TEST(EnumToJson, blackhole_type)
+{
+    cout << "TEST_EnumToJson::blackhole_type started: " << endl;
+    /* Prepare the value */
+    cout << "[DEBUG] Preparing values ..." << endl;
+    fib::blackhole_type test_val = BLACKHOLE_REJECT;
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json function for enum blackhole_type ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the value of constructed JSON */
+    EXPECT_EQ(j, "BLACKHOLE_REJECT");
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json function for enum blackhole_type ..." << endl;
+    fib::blackhole_type parsed_val;
+    fib::from_json(j, parsed_val);
+
+    /* Check the value of struct parsed from JSON */
+    cout << "[DEBUG] Checking STRUCT value parsed from JSON string ..." << endl;
+    EXPECT_EQ(parsed_val, test_val);
+
+    cout << "TEST_EnumToJson::blackhole_type finished." << endl;
+}
+
+TEST(EnumToJson, lsp_type)
+{
+    cout << "Test_EnumToJson::lsp_type started: " << endl;
+    /* Prepare the value */
+    cout << "[DEBUG] Preparing values ..." << endl;
+    fib::lsp_types_t test_val = ZEBRA_LSP_BGP;
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json function for enum lsp_types_t ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the value of constructed JSON */
+    EXPECT_EQ(j, "ZEBRA_LSP_BGP");
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json function for enum lsp_types_t ..." << endl;
+    fib::lsp_types_t parsed_val;
+    fib::from_json(j, parsed_val);
+
+    /* Check the value of struct parsed from JSON */
+    cout << "[DEBUG] Checking STRUCT value parsed from JSON string ..." << endl;
+    EXPECT_EQ(parsed_val, test_val);
+
+    cout << "TEST_EnumToJson::lsp_types_t finished." << endl;
+}
+
+TEST(EnumToJson, seg6local_action)
+{
+    cout << "Test_EnumToJson::seg6local_action started: " << endl;
+    /* Prepare the value */
+    cout << "[DEBUG] Preparing values ..." << endl;
+    fib::seg6local_action_t test_val = SEG6_LOCAL_ACTION_END_DT46;
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json function for enum seg6local_action_t ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the value of constructed JSON */
+    EXPECT_EQ(j, "SEG6_LOCAL_ACTION_END_DT46");
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json function for enum seg6local_action_t ..." << endl;
+    fib::seg6local_action_t parsed_val;
+    fib::from_json(j, parsed_val);
+
+    /* Check the value of struct parsed from JSON */
+    cout << "[DEBUG] Checking STRUCT value parsed from JSON string ..." << endl;
+    EXPECT_EQ(parsed_val, test_val);
+
+    cout << "TEST_EnumToJson::seg6local_action_t finished." << endl;
+}
+
+TEST(EnumToJson, srv6_headend_behavior)
+{
+    cout << "Test_EnumToJson::srv6_headend_behavior started: " << endl;
+    /* Prepare the value */
+    cout << "[DEBUG] Preparing value ..." << endl;
+    fib::srv6_headend_behavior test_val = SRV6_HEADEND_BEHAVIOR_H_INSERT;
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json function for enum srv6_headend_behavior ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the value of constructed JSON */
+    EXPECT_EQ(j, "SRV6_HEADEND_BEHAVIOR_H_INSERT");
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json function for enum sev6_headend_behavior ..." << endl;
+    fib::srv6_headend_behavior parsed_val;
+    fib::from_json(j, parsed_val);
+
+    /* Check the value of struct parsed from JSON */
+    cout << "[DEBUG] Checking STRUCT value parsed from JSON string ..." << endl;
+    EXPECT_EQ(parsed_val, test_val);
+
+    cout << "TEST_EnumToJson::srv6_headend_behavior finishd." << endl;
+}

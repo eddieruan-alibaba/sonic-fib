@@ -122,6 +122,51 @@ TEST(NextHopGroupFull, multi_nexthop)
     EXPECT_TRUE(memcmp(&assigned_nhg.rmap_src, &zero_g_addr, sizeof(g_addr)) == 0);
     EXPECT_EQ(assigned_nhg.nh_srv6, nullptr);
 
+    /* Add test for copy constructor in multi-nexthop case */
+    cout << "TEST_NextHopGroupFull::copy_constructor for multi_nexthop started:" << endl;
+    cout << "[DEBUG] Use the declared NextHopGroupFull nhg to trigger the copy constructor ..." << endl;
+    NextHopGroupFull copy_nhg = nhg;
+
+    /* Check the value of the copied NextHopGroupFull */
+    cout << "[DEBUG] Checking copied constructed values ..." << endl;
+    // Check plain values
+    EXPECT_EQ(copy_nhg.id, nhg.id);
+    EXPECT_EQ(copy_nhg.key, nhg.key);
+    // Check nh_grp_full_list status
+    EXPECT_EQ(copy_nhg.nh_grp_full_list.size(), nhg.nh_grp_full_list.size());
+    for (size_t i = 0; i < nhg.nh_grp_full_list.size(); i++) {
+        EXPECT_EQ(copy_nhg.nh_grp_full_list[i].id, nhg.nh_grp_full_list[i].id);
+        EXPECT_EQ(copy_nhg.nh_grp_full_list[i].weight, nhg.nh_grp_full_list[i].weight);
+        EXPECT_EQ(copy_nhg.nh_grp_full_list[i].num_direct, nhg.nh_grp_full_list[i].num_direct);
+    }
+    // Check depends status
+    EXPECT_EQ(copy_nhg.depends.size(), nhg.depends.size());
+    for (size_t i = 0; i < nhg.depends.size(); i++) {
+        EXPECT_EQ(copy_nhg.depends[i], nhg.depends[i]);
+    }
+    // Check dependents status
+    EXPECT_EQ(copy_nhg.dependents.size(), nhg.dependents.size());
+    for (size_t i = 0; i < nhg.dependents.size(); i++) {
+        EXPECT_EQ(copy_nhg.dependents[i], nhg.dependents[i]);
+    }
+    // Check other unused values
+    cout << "[DEBUG] Checking copied default values ..." << endl;
+    EXPECT_EQ(copy_nhg.weight, nhg.weight);
+    EXPECT_EQ(copy_nhg.flags, nhg.flags);
+    EXPECT_TRUE(copy_nhg.ifname.empty());
+    EXPECT_EQ(copy_nhg.type, nhg.type);
+    EXPECT_EQ(copy_nhg.vrf_id, nhg.vrf_id);
+    EXPECT_EQ(copy_nhg.ifindex, nhg.ifindex);
+    EXPECT_EQ(copy_nhg.nh_label_type, nhg.nh_label_type);
+
+    EXPECT_TRUE(memcmp(&copy_nhg.gate, &zero_g_addr, sizeof(g_addr)) == 0);
+    EXPECT_EQ(copy_nhg.bh_type, nhg.bh_type);
+    EXPECT_TRUE(memcmp(&copy_nhg.src, &zero_g_addr, sizeof(g_addr)) == 0);
+    EXPECT_TRUE(memcmp(&copy_nhg.rmap_src, &zero_g_addr, sizeof(g_addr)) == 0);
+    EXPECT_EQ(copy_nhg.nh_srv6, nullptr);
+
+    cout << "TEST_NextHopGroupFull::copy_constructor for multi_nexthop finished." << endl;
+
     // Test  Serializing API
     string json_str = to_json_string(nhg);
     std::cout << "Serialized NHG to JSON str: " << json_str << std::endl;
@@ -333,4 +378,74 @@ TEST(NextHopGroupFull, singleton)
     EXPECT_TRUE(assigned_nhg.nh_grp_full_list.empty());
 
     cout << "TEST_NextHopGroupFull::operator = for singleton finished." << endl;
+
+    /* Add test for copy constructor in singleton case */
+    cout << "TEST_NextHopGroupFull::copy_constructor for singleton started:" << endl;
+    cout << "[DEBUG] Use a constructed nhg to trigger the copy constructor ..." << endl;
+    NextHopGroupFull copy_nhg = nhg;
+
+    /* Check the value of the copied NextHopGroupFull */
+    cout << "[DEBUG] Checking copied constructed values ..." << endl;
+    // Check plain values
+    EXPECT_EQ(copy_nhg.id, nhg.id);
+    EXPECT_EQ(copy_nhg.key, nhg.key);
+    EXPECT_EQ(copy_nhg.type, nhg.type);
+    EXPECT_EQ(copy_nhg.vrf_id, nhg.vrf_id);
+    EXPECT_EQ(copy_nhg.ifindex, nhg.ifindex);
+    EXPECT_EQ(copy_nhg.ifname, nhg.ifname);
+    EXPECT_EQ(copy_nhg.nh_label_type, nhg.nh_label_type);
+    EXPECT_EQ(copy_nhg.flags, nhg.flags);
+
+    // Check address values
+    EXPECT_TRUE(memcmp(&copy_nhg.gate, &nhg.gate, sizeof(g_addr)) == 0);
+    EXPECT_TRUE(memcmp(&copy_nhg.src, &nhg.src, sizeof(g_addr)) == 0);
+    EXPECT_TRUE(memcmp(&copy_nhg.rmap_src, &nhg.rmap_src, sizeof(g_addr)) == 0);
+
+    // Check SRv6 info
+    EXPECT_NE(copy_nhg.nh_srv6, nullptr);
+    // Check nh_srv6's seg6local_action
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6local_action, nhg.nh_srv6->seg6local_action);
+    // Check nh_srv6's seg6local_context
+    EXPECT_TRUE(memcmp(&copy_nhg.nh_srv6->seg6local_ctx.nh6,
+                    &nhg.nh_srv6->seg6local_ctx.nh6, sizeof(in6_addr)) == 0);
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6local_ctx.table, nhg.nh_srv6->seg6local_ctx.table);
+    // Check nh_srv6's seg6local_ctx's flv
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6local_ctx.flv.flv_ops, nhg.nh_srv6->seg6local_ctx.flv.flv_ops);
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6local_ctx.flv.lcblock_len,
+            nhg.nh_srv6->seg6local_ctx.flv.lcblock_len);
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6local_ctx.flv.lcnode_func_len,
+            nhg.nh_srv6->seg6local_ctx.flv.lcnode_func_len);
+    // flv end
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6local_ctx.block_len, nhg.nh_srv6->seg6local_ctx.block_len);
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6local_ctx.node_len, nhg.nh_srv6->seg6local_ctx.node_len);
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6local_ctx.function_len, nhg.nh_srv6->seg6local_ctx.function_len);
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6local_ctx.argument_len, nhg.nh_srv6->seg6local_ctx.argument_len);
+    // Check nh_srv6's seg6_seg_stack
+    EXPECT_NE(copy_nhg.nh_srv6->seg6_segs, nullptr);
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6_segs->encap_behavior, nhg.nh_srv6->seg6_segs->encap_behavior);
+    EXPECT_EQ(copy_nhg.nh_srv6->seg6_segs->num_segs, nhg.nh_srv6->seg6_segs->num_segs);
+    // Check nh_srv6's seg6_seg_stack's seg list
+    for (size_t i = 0; i < nhg.nh_srv6->seg6_segs->num_segs; i++) {
+        if (i < nhg.nh_srv6->seg6_segs->num_segs) {
+            EXPECT_TRUE(memcmp(&copy_nhg.nh_srv6->seg6_segs->seg[i],
+                            &nhg.nh_srv6->seg6_segs->seg[i], sizeof(in6_addr)) == 0)
+                << "Mismatch in segment " << i << endl;
+        } else {
+            in6_addr zero = {};
+            memset(&zero, 0, sizeof(zero));
+            EXPECT_TRUE(memcmp(&copy_nhg.nh_srv6->seg6_segs->seg[i], &zero, sizeof(in6_addr)) == 0);
+        }
+    }
+    // Check other unused values
+    EXPECT_TRUE(copy_nhg.nh_grp_full_list.empty());
+
+    /* We should confirm the copy_nhg is copied deeply */
+    if (copy_nhg.nh_srv6 && nhg.nh_srv6) {
+        EXPECT_NE(copy_nhg.nh_srv6, nhg.nh_srv6);
+        if (copy_nhg.nh_srv6->seg6_segs && nhg.nh_srv6->seg6_segs) {
+            EXPECT_NE(copy_nhg.nh_srv6->seg6_segs, nhg.nh_srv6->seg6_segs);
+        }
+    }
+
+    cout << "TEST_NextHopGroupFull::copy_constructor for singleton finished." << endl;
 }

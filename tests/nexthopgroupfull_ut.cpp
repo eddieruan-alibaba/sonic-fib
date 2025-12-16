@@ -147,6 +147,7 @@ TEST(NextHopGroupFull, singleton)
     vrf_id_t test_vrf_id = 101;
     ifindex_t test_ifindex = 101;
     string test_ifname = "eth101";
+    vector<uint32_t> test_depends = {200, 300, 400};
     vector<uint32_t> test_dependents = {500, 600};
     enum lsp_types_t test_nh_label_type = ZEBRA_LSP_NONE;
     enum blackhole_type test_bh_type = BLACKHOLE_NULL;
@@ -202,8 +203,8 @@ TEST(NextHopGroupFull, singleton)
     /* Call constructor function */
     cout << "[DEBUG] Calling NextHopGroupFull Constructor ..." << endl;
     NextHopGroupFull nhg(test_id, test_key, test_type, test_vrf_id, test_ifindex,
-                test_ifname, test_dependents, test_nh_label_type, test_bh_type,
-                test_gateway, test_src, test_rmap_src,
+                test_ifname, test_depends, test_dependents, test_nh_label_type,
+                test_bh_type, test_gateway, test_src, test_rmap_src,
                 test_weight, test_flags, test_has_srv6, test_has_seg6_segs,
                 &test_nh_srv6, &test_nh_seg6_segs, test_nh_segs);
 
@@ -217,6 +218,10 @@ TEST(NextHopGroupFull, singleton)
     EXPECT_EQ(nhg.vrf_id, test_vrf_id);
     EXPECT_EQ(nhg.ifindex, test_ifindex);
     EXPECT_EQ(nhg.ifname, test_ifname);
+    EXPECT_EQ(nhg.depends.size(), test_depends.size());
+    for (size_t i = 0; i < test_depends.size(); i++) {
+        EXPECT_EQ(nhg.depends[i], test_depends[i]);
+    }
     EXPECT_EQ(nhg.dependents.size(), test_dependents.size());
     for (size_t i = 0; i < test_dependents.size(); i++) {
         EXPECT_EQ(nhg.dependents[i], test_dependents[i]);
@@ -263,7 +268,6 @@ TEST(NextHopGroupFull, singleton)
     }
     // Check other unused values
     EXPECT_TRUE(nhg.nh_grp_full_list.empty());
-    EXPECT_TRUE(nhg.depends.empty());
 
     cout << "TEST_NextHopGroupFull::singleton finished." << endl;
 
@@ -327,7 +331,6 @@ TEST(NextHopGroupFull, singleton)
     }
     // Check other unused values
     EXPECT_TRUE(assigned_nhg.nh_grp_full_list.empty());
-    EXPECT_TRUE(assigned_nhg.depends.empty());
 
     cout << "TEST_NextHopGroupFull::operator = for singleton finished." << endl;
 }

@@ -156,6 +156,9 @@ namespace fib {
         // Copy assignment operator
         NextHopGroupFull& operator = (const NextHopGroupFull &other);
 
+        // Copy constructor
+        NextHopGroupFull(const NextHopGroupFull& other);
+
         ~NextHopGroupFull();
     };
 

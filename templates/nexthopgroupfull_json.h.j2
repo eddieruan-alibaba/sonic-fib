@@ -110,6 +110,7 @@ inline void to_json(nlohmann::json& j, const seg6_seg_stack* stack) {
     }
     j = nlohmann::json{
         {"encap_behavior", stack->encap_behavior},
+        {"num_segs", stack->num_segs},
         {"segs", segs}
     };
 }

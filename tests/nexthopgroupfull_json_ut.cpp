@@ -315,7 +315,7 @@ TEST(StructToFromJson, seg6_seg_stack_ptr)
     fib::seg6_seg_stack* test_val = static_cast<fib::seg6_seg_stack*>(malloc(total));
     ASSERT_NE(test_val, nullptr);
     test_val->encap_behavior = fib::SRV6_HEADEND_BEHAVIOR_H_ENCAPS;
-    test_val->num_segs = static_cast<uint8_t>(test_segs.size());
+    test_val->num_segs = 2;
     for (size_t i = 0; i < test_segs.size(); ++i) {
         set_ipv6(test_val->seg[i], test_segs[i].c_str());
     }
@@ -331,6 +331,7 @@ TEST(StructToFromJson, seg6_seg_stack_ptr)
     /* Check the values of constructed JSON */
     EXPECT_EQ(j["encap_behavior"], "SRV6_HEADEND_BEHAVIOR_H_ENCAPS");
     auto j_segs_out = j["segs"].get<std::vector<std::string>>();
+    EXPECT_EQ(j["num_segs"], test_val->num_segs);
     EXPECT_EQ(j_segs_out.size(), 2);
     EXPECT_EQ(j_segs_out[0], "2001:db8::1");
     EXPECT_EQ(j_segs_out[1], "2001:db8::2");

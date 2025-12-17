@@ -30,7 +30,11 @@ def json_type_to_cpp(prop, defs):
 
     typ = prop.get("type")
     if typ == "integer":
-        return "std::uint32_t" if prop.get("minimum", 0) >= 0 else "std::int32_t"
+        maximum = prop.get("maximum", None)
+        if maximum is None:
+            return "std::uint32_t" if prop.get("minimum", 0) >= 0 else "std::int32_t"
+        elif maximum <= 255:
+            return "std::uint8_t" if prop.get("minimum", 0) >= 0 else "std::int8_t"
     elif typ == "string":
         return "std::string"
     elif typ == "array":

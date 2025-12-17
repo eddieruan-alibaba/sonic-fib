@@ -303,3 +303,57 @@ TEST(StructToFromJson, seg6local_context)
 
     cout << "TEST_StructToFromJson::seg6local_context finished." << endl;
 }
+
+// --- Test: seg6_seg_stack* (pointer) ---
+TEST(StructToFromJson, seg6_seg_stack_ptr)
+{
+    cout << "TEST_StructToFromJson::seg6_seg_stack_ptr started:" << endl;
+    /* Prepare the value */
+    cout << "[DEBUG] Preparing values ..." << endl;
+    std::vector<std::string> test_segs = {"2001:db8::1", "2001:db8::2"};
+    size_t total = sizeof(fib::seg6_seg_stack) + test_segs.size() * sizeof(in6_addr);
+    fib::seg6_seg_stack* test_val = static_cast<fib::seg6_seg_stack*>(malloc(total));
+    ASSERT_NE(test_val, nullptr);
+    test_val->encap_behavior = fib::SRV6_HEADEND_BEHAVIOR_H_ENCAPS;
+    test_val->num_segs = static_cast<uint8_t>(test_segs.size());
+    for (size_t i = 0; i < test_segs.size(); ++i) {
+        set_ipv6(test_val->seg[i], test_segs[i].c_str());
+    }
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json for seg6_seg_stack_ptr ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the values of constructed JSON */
+    EXPECT_EQ(j["encap_behavior"], "SRV6_HEADEND_BEHAVIOR_H_ENCAPS");
+    auto j_segs_out = j["segs"].get<std::vector<std::string>>();
+    EXPECT_EQ(j_segs_out.size(), 2);
+    EXPECT_EQ(j_segs_out[0], "2001:db8::1");
+    EXPECT_EQ(j_segs_out[1], "2001:db8::2");
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json for seg6_seg_stack_ptr ..." << endl;
+    fib::seg6_seg_stack* parsed_val = nullptr;
+    fib::from_json(j, parsed_val);
+    ASSERT_NE(parsed_val, nullptr);
+
+    cout << "[DEBUG] Checking parsed values ..." << endl;
+    EXPECT_EQ(parsed_val->encap_behavior, test_val->encap_behavior);
+    EXPECT_EQ(parsed_val->num_segs, test_val->num_segs);
+    for (int i = 0; i < parsed_val->num_segs; ++i) {
+        char test_buf[INET6_ADDRSTRLEN], parsed_buf[INET6_ADDRSTRLEN];
+        inet_ntop(AF_INET6, &test_val->seg[i], test_buf, sizeof(test_buf));
+        inet_ntop(AF_INET6, &parsed_val->seg[i], parsed_buf, sizeof(parsed_buf));
+        EXPECT_STREQ(test_buf, parsed_buf);
+    }
+
+    // Cleanup
+    free(test_val);
+    if (parsed_val) free(parsed_val);
+
+    cout << "TEST_StructToJson::seg6_seg_stack_ptr finished." << endl;
+}

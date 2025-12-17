@@ -199,12 +199,12 @@ TEST(StructToFromJson, nh_grp_full)
     cout << "TEST_StructToFromJson::nh_grp_full finished." << endl;
 }
 
-// --- Test: seg6local_flavors_info
+// --- Test: seg6local_flavors_info ---
 TEST(StructToFromJson, seg6local_flavors_info)
 {
     cout << "TEST_StructToFromJson::seg6local_flavors_info started:" << endl;
     /* Prepare the value */
-    cout << "[Debug] Preparing values ..." << endl;
+    cout << "[DEBUG] Preparing values ..." << endl;
     fib::seg6local_flavors_info test_val{1000, 32, 16};
 
     /* Call to_json function */
@@ -232,4 +232,74 @@ TEST(StructToFromJson, seg6local_flavors_info)
     EXPECT_EQ(parsed_val.lcnode_func_len, test_val.lcnode_func_len);
 
     cout << "TEST_StructToFromJson::seg6local_flavors_info finished." << endl;
+}
+
+// --- Helper for IP conversion in tests ---
+static void set_ipv4(struct in_addr& addr, const char* ip_str) {
+    ASSERT_EQ(inet_pton(AF_INET, ip_str, &addr), 1);
+}
+static void set_ipv6(struct in6_addr& addr, const char* ip_str) {
+    ASSERT_EQ(inet_pton(AF_INET6, ip_str, &addr), 1);
+}
+
+// --- Test: seg6local_context ---
+TEST(StructToFromJson, seg6local_context)
+{
+    cout << "TEST_StructToFromJson::seg6local_context started:" << endl;
+    /* Prepare the value */
+    cout << "[DEBUG] Preparing values ..." << endl;
+    fib::seg6local_context test_val{};
+    char* test_nh4 = "192.168.10.1";
+    char* test_nh6 = "2001:db8::a";
+    set_ipv4(test_val.nh4, test_nh4);
+    set_ipv6(test_val.nh6, test_nh6);
+    test_val.table = 100;
+    test_val.flv = {1000, 32,16};
+    test_val.block_len = 32;
+    test_val.node_len = 16;
+    test_val.function_len = 16;
+    test_val.argument_len = 0;
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json for seg6local_context ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the values of constructed JSON */
+    EXPECT_EQ(j["nh4"], test_nh4);
+    EXPECT_EQ(j["nh6"], test_nh6);
+    EXPECT_EQ(j["table"], test_val.table);
+    EXPECT_EQ(j["flv"]["flv_ops"], test_val.flv.flv_ops);
+    EXPECT_EQ(j["flv"]["lcblock_len"], test_val.flv.lcblock_len);
+    EXPECT_EQ(j["flv"]["lcnode_func_len"], test_val.flv.lcnode_func_len);
+    EXPECT_EQ(j["block_len"], test_val.block_len);
+    EXPECT_EQ(j["node_len"], test_val.node_len);
+    EXPECT_EQ(j["function_len"], test_val.function_len);
+    EXPECT_EQ(j["argument_len"], test_val.argument_len);
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json for seg6local_context ..." << endl;
+    fib::seg6local_context parsed_val;
+    fib::from_json(j, parsed_val);
+
+    /* Check the value of seg6local_context struct parsed from JSON */
+    cout << "[DEBUG] Checking STRUCT value parsed from JSON string ..." << endl;
+    char buf4[INET_ADDRSTRLEN], buf6[INET6_ADDRSTRLEN];
+    inet_ntop(AF_INET, &parsed_val.nh4, buf4, sizeof(buf4));
+    inet_ntop(AF_INET6, &parsed_val.nh6, buf6, sizeof(buf6));
+    EXPECT_STREQ(buf4, test_nh4);
+    EXPECT_STREQ(buf6, test_nh6);
+    EXPECT_EQ(parsed_val.table, test_val.table);
+    EXPECT_EQ(parsed_val.flv.flv_ops, test_val.flv.flv_ops);
+    EXPECT_EQ(parsed_val.flv.lcblock_len, test_val.flv.lcblock_len);
+    EXPECT_EQ(parsed_val.flv.lcnode_func_len, test_val.flv.lcnode_func_len);
+    EXPECT_EQ(parsed_val.block_len, test_val.block_len);
+    EXPECT_EQ(parsed_val.node_len, test_val.node_len);
+    EXPECT_EQ(parsed_val.function_len, test_val.function_len);
+    EXPECT_EQ(parsed_val.argument_len, test_val.argument_len);
+
+    cout << "TEST_StructToFromJson::seg6local_context finished." << endl;
 }

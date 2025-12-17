@@ -198,3 +198,38 @@ TEST(StructToFromJson, nh_grp_full)
 
     cout << "TEST_StructToFromJson::nh_grp_full finished." << endl;
 }
+
+// --- Test: seg6local_flavors_info
+TEST(StructToFromJson, seg6local_flavors_info)
+{
+    cout << "TEST_StructToFromJson::seg6local_flavors_info started:" << endl;
+    /* Prepare the value */
+    cout << "[Debug] Preparing values ..." << endl;
+    fib::seg6local_flavors_info test_val{1000, 32, 16};
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json for seg6local_flavors_info ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the values of constructed JSON */
+    EXPECT_EQ(j["flv_ops"], test_val.flv_ops);
+    EXPECT_EQ(j["lcblock_len"], test_val.lcblock_len);
+    EXPECT_EQ(j["lcnode_func_len"], test_val.lcnode_func_len);
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json for seg6local_flavors_info ..." << endl;
+    fib::seg6local_flavors_info parsed_val;
+    fib::from_json(j, parsed_val);
+
+    /* Check the value of seg6local_flavors_info struct parsed from JSON */
+    cout << "[DEBUG] Checking STRUCT value parsed from JSON string ..." << endl;
+    EXPECT_EQ(parsed_val.flv_ops, test_val.flv_ops);
+    EXPECT_EQ(parsed_val.lcblock_len, test_val.lcblock_len);
+    EXPECT_EQ(parsed_val.lcnode_func_len, test_val.lcnode_func_len);
+
+    cout << "TEST_StructToFromJson::seg6local_flavors_info finished." << endl;
+}

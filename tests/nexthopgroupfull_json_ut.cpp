@@ -162,3 +162,39 @@ TEST(EnumToJson, srv6_headend_behavior)
 
     cout << "TEST_EnumToJson::srv6_headend_behavior finishd." << endl;
 }
+
+
+// --- Test: nh_grp_full ---
+TEST(StructToFromJson, nh_grp_full)
+{
+    cout << "TEST_StructToFromJson::nh_grp_full started:" << endl;
+    /* Prepare the value */
+    cout << "[DEBUG] Preparing values ..." << endl;
+    fib::nh_grp_full test_val{1001, 5, 3};
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json for nh_grp_full ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the values of constructed JSON */
+    EXPECT_EQ(j["id"], 1001);
+    EXPECT_EQ(j["weight"], 5);
+    EXPECT_EQ(j["num_direct"], 3);
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json for nh_grp_full ..." << endl;
+    fib::nh_grp_full parsed_val;
+    fib::from_json(j, parsed_val);
+
+    /* Check the value of nh_grp_full struct parsed from JSON */
+    cout << "[DEBUG] Checking STRUCT value parsed from JSON string ..." << endl;
+    EXPECT_EQ(parsed_val.id, test_val.id);
+    EXPECT_EQ(parsed_val.weight, test_val.weight);
+    EXPECT_EQ(parsed_val.num_direct, test_val.num_direct);
+
+    cout << "TEST_StructToFromJson::nh_grp_full finished." << endl;
+}

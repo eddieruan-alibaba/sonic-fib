@@ -157,7 +157,8 @@ inline void from_json(const nlohmann::json& j, nexthop_srv6*& srv6) {
 // --- {{root_struct_name}} ---
 inline void to_json(nlohmann::json& j, const {{root_struct_name}}& nh) {
     j = nlohmann::json{
-        {%- for field in root_struct.fields %}
+        {%- set sorted_fields = root_struct.fields | sort(attribute='position') %}
+        {%- for field in sorted_fields %}
         {%- if field.name == "bh_type" %}
         {%- elif field.name == "nh_srv6" %}
         {%- elif field.name in ["gate", "src", "rmap_src"] %}
@@ -181,7 +182,8 @@ inline void to_json(nlohmann::json& j, const {{root_struct_name}}& nh) {
     }
 }
 inline void from_json(const nlohmann::json& j, {{ root_struct_name }}& nh) {
-    {%- for field in root_struct.fields %}
+    {%- set sorted_fields = root_struct.fields | sort(attribute='position') %}
+    {%- for field in sorted_fields %}
     {%- if field.name in ["gate", "src", "rmap_src"] %}
     std::string {{ field.name }}_str = j.at("{{ field.name }}");
     string_to_gaddr({{ field.name }}_str, nh.{{ field.name }}, nh.type);

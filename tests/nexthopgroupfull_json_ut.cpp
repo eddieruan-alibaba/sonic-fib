@@ -12,7 +12,7 @@
 using namespace std;
 using namespace fib;
 
-nh_grp_full make_nh_grp_full(uint32_t id, uint8_t weight, uint32_t num_direct) {
+static nh_grp_full make_nh_grp_full(uint32_t id, uint8_t weight, uint32_t num_direct) {
     return {id, weight, num_direct};
 }
 

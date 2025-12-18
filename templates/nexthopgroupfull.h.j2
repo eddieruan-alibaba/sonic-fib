@@ -112,6 +112,10 @@ namespace fib {
         // Copy constructor
         NextHopGroupFull(const NextHopGroupFull& other);
 
+        // operator == and !=
+        bool operator==(const NextHopGroupFull& other) const;
+        bool operator!=(const NextHopGroupFull& other) const;
+
         ~NextHopGroupFull();
     };
 

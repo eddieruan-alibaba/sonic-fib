@@ -167,6 +167,14 @@ TEST(NextHopGroupFull, multi_nexthop)
 
     cout << "TEST_NextHopGroupFull::copy_constructor for multi_nexthop finished." << endl;
 
+    /* Add case for operator == and != */
+    cout << "TEST_NextHopGroupFull::operator == started:" << endl;
+    EXPECT_TRUE(copy_nhg == nhg);
+    cout << "TEST_NextHopGroupFull::operator == finished." << endl;
+    cout << "TEST_NextHopGroupFull::operator != started:" << endl;
+    EXPECT_FALSE(copy_nhg != nhg);
+    cout << "TEST_NextHopGroupFull::operator != finished." << endl;
+
     // Test  Serializing API
     string json_str = to_json_string(nhg);
     std::cout << "Serialized NHG to JSON str: " << json_str << std::endl;
@@ -448,4 +456,14 @@ TEST(NextHopGroupFull, singleton)
     }
 
     cout << "TEST_NextHopGroupFull::copy_constructor for singleton finished." << endl;
+
+    /* Add test of operator == and != for singleton case */
+    cout << "TEST_NextHopGroupFull::operator == for singleton started:" << endl;
+    EXPECT_TRUE(copy_nhg == nhg);
+    cout << "TEST_NextHopGroupFull::operator == for singleton finished." << endl;
+    cout << "TEST_NextHopGroupFull::operator != for singleton started:" << endl;
+    EXPECT_FALSE(copy_nhg != nhg);
+    cout << "TEST_NextHopGroupFull::operator != for singleton finished." << endl;
+
+    cout << "TEST_NextHopGroupFull::singleton finished." << endl;
 }

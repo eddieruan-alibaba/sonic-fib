@@ -12,6 +12,10 @@
 using namespace std;
 using namespace fib;
 
+nh_grp_full make_nh_grp_full(uint32_t id, uint8_t weight, uint32_t num_direct) {
+    return {id, weight, num_direct};
+}
+
 TEST(EnumToJson, nexthop_type)
 {
     cout << "TEST_EnumToJson::nexthop_type started: " << endl;
@@ -466,4 +470,60 @@ TEST(StructToFromJson, nexthop_srv6_ptr)
     }
 
     cout << "TEST_StructToFromJson::nexthop_srv6_ptr finished." << endl;
+}
+
+TEST(StructToFromJson, NextHopGroupFull_multi_nexthop)
+{
+    cout << "TEST_StructToFromJson::NextHopGroupFull started:" << endl;
+    /* Prepare the value */
+    cout << "[DEBUG] Preparing values ..." << endl;
+    uint32_t test_id = 100;
+    uint32_t test_key = 1234567;
+    vector<nh_grp_full> test_nh_grp_full_list = {
+        make_nh_grp_full(200, 1, 0),
+        make_nh_grp_full(300, 1, 2),
+        make_nh_grp_full(310, 2, 0),
+        make_nh_grp_full(320, 2, 0),
+        make_nh_grp_full(400, 1, 0)
+    };
+    vector<uint32_t> test_depends = {200, 300, 400};
+    vector<uint32_t> test_dependents = {500, 600};
+
+    /* Call constructor function */
+    cout << "[DEBUG] Calling NextHopGroupFull Constructor ..." << endl;
+    NextHopGroupFull test_val(test_id, test_key, test_nh_grp_full_list, test_depends, test_dependents);
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json for NextHopGroupFull in multi-nexthop case ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the values of constructed JSON */
+    EXPECT_EQ(j["id"], 100);
+    EXPECT_EQ(j["key"], 1234567);
+    for (size_t i = 0; i < test_val.nh_grp_full_list.size(); i++) {
+        EXPECT_EQ(j["nh_grp_full_list"][i]["id"], test_val.nh_grp_full_list[i].id);
+        EXPECT_EQ(j["nh_grp_full_list"][i]["weight"], test_val.nh_grp_full_list[i].weight);
+        EXPECT_EQ(j["nh_grp_full_list"][i]["num_direct"], test_val.nh_grp_full_list[i].num_direct);
+    }
+    for (size_t i = 0; i < test_val.depends.size(); i++) {
+        EXPECT_EQ(j["depends"][i], test_val.depends[i]);
+    }
+    for (size_t i = 0; i < test_val.dependents.size(); i++) {
+        EXPECT_EQ(j["dependents"][i], test_val.dependents[i]);
+    }
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json for NextHopGroupFull in multi-nexthop case ..." << endl;
+    fib::NextHopGroupFull parsed_val;
+    fib::from_json(j, parsed_val);
+
+    /* Check values of STRUCT parsed from JSON */
+    cout << "[DEBUG] Checking parsed values from constructed JSON ..." << endl;
+    EXPECT_TRUE(parsed_val == test_val);
+
+    cout << "TEST_StructToFromJson::NextHopGroupFull_multi_nexthop finished." << endl;
 }

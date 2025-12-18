@@ -527,3 +527,147 @@ TEST(StructToFromJson, NextHopGroupFull_multi_nexthop)
 
     cout << "TEST_StructToFromJson::NextHopGroupFull_multi_nexthop finished." << endl;
 }
+
+TEST(StructToFromJson, NextHopGroupFull_singleton)
+{
+    cout << "TEST_StructToFromJson::NextHopGroupFull_singleton started:" << endl;
+    /* Prepare the values */
+    uint32_t test_id = 100;
+    uint32_t test_key = 1234567;
+    enum nexthop_types_t test_type = NEXTHOP_TYPE_IPV6;
+    vrf_id_t test_vrf_id = 101;
+    ifindex_t test_ifindex = 101;
+    string test_ifname = "eth101";
+    vector<uint32_t> test_depends = {200, 300, 400};
+    vector<uint32_t> test_dependents = {500, 600};
+    enum lsp_types_t test_nh_label_type = ZEBRA_LSP_NONE;
+    enum blackhole_type test_bh_type = BLACKHOLE_NULL;
+
+    union g_addr test_gateway = {};
+    union g_addr test_src = {};
+    union g_addr test_rmap_src = {};
+    inet_pton(AF_INET6, "2001:db8::1", &test_gateway.ipv6.s6_addr);
+    inet_pton(AF_INET6, "2001:db8::2", &test_src.ipv6.s6_addr);
+    inet_pton(AF_INET6, "2001:db8::3", &test_rmap_src.ipv6.s6_addr);
+
+    uint8_t test_weight = 8;
+    uint8_t test_flags = 8;
+    bool test_has_srv6 = true;
+    bool test_has_seg6_segs = true;
+
+    // Prepare the segment list
+    vector<struct in6_addr> test_nh_segs {
+        {}, {}, {}
+    };
+    inet_pton(AF_INET6, "2001:db8:1::1", test_nh_segs[0].s6_addr);
+    inet_pton(AF_INET6, "2001:db8:1::2", test_nh_segs[1].s6_addr);
+    inet_pton(AF_INET6, "2001:db8:1::3", test_nh_segs[2].s6_addr);
+
+    // Prepare seg6_segs
+    size_t seg6_segs_size = sizeof(struct seg6_seg_stack) +
+                                test_nh_segs.size() * sizeof(struct in6_addr);
+    struct seg6_seg_stack* test_nh_seg6_segs = 
+        (struct seg6_seg_stack*)malloc(seg6_segs_size);
+    test_nh_seg6_segs->encap_behavior = SRV6_HEADEND_BEHAVIOR_H_ENCAPS;
+    test_nh_seg6_segs->num_segs = 3;
+    memcpy(test_nh_seg6_segs->seg, test_nh_segs.data(), test_nh_segs.size() * sizeof(in6_addr));
+
+    //Prepare seg6local_flavors_info
+    struct seg6local_flavors_info test_flv = {
+        .flv_ops = 100,
+        .lcblock_len = 20,
+        .lcnode_func_len = 16
+    };
+
+    // Prepare seg6local_ctx
+    struct seg6local_context test_seg6local_ctx = {};
+    char* test_nh4 = "192.168.10.1";
+    char* test_nh6 = "2001:db8::a";
+    set_ipv4(test_seg6local_ctx.nh4, test_nh4);
+    set_ipv6(test_seg6local_ctx.nh6, test_nh6);
+    test_seg6local_ctx.table = 100;
+    test_seg6local_ctx.block_len = 36;
+    test_seg6local_ctx.node_len = 12;
+    test_seg6local_ctx.function_len = 20;
+    test_seg6local_ctx.argument_len = 16;
+    memcpy(&test_seg6local_ctx.flv, &test_flv, sizeof(struct seg6local_flavors_info));
+
+    // Prepare nh_srv6
+    struct nexthop_srv6 test_nh_srv6 = {};
+    test_nh_srv6.seg6local_action = SEG6_LOCAL_ACTION_END_DT6;
+    memcpy(&test_nh_srv6.seg6local_ctx, &test_seg6local_ctx, sizeof(struct seg6local_context));
+
+    /* Call constructor function */
+    cout << "[DEBUG] Calling NextHopGroupFull Constructor ..." << endl;
+    NextHopGroupFull test_val(test_id, test_key, test_type, test_vrf_id, test_ifindex,
+                test_ifname, test_depends, test_dependents, test_nh_label_type,
+                test_bh_type, test_gateway, test_src, test_rmap_src,
+                test_weight, test_flags, test_has_srv6, test_has_seg6_segs,
+                &test_nh_srv6, test_nh_seg6_segs, test_nh_segs);
+
+    // Free the memory allocated dynamically
+    free(test_nh_seg6_segs);
+    test_nh_seg6_segs = nullptr;
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json for NextHopGroupFull in singleton case ..." << endl;
+    nlohmann::ordered_json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the values of constructed JSON */
+    cout << "[DEBUG] Checking JSON values ..." << endl;
+    EXPECT_EQ(j["id"], test_val.id);
+    EXPECT_EQ(j["key"], test_val.key);
+    EXPECT_EQ(j["type"], test_val.type);
+    EXPECT_EQ(j["vrf_id"], test_val.vrf_id);
+    EXPECT_EQ(j["ifindex"], test_val.ifindex);
+    for (size_t i = 0; i < test_val.depends.size(); i++) {
+        EXPECT_EQ(j["depends"][i], test_val.depends[i]);
+    }
+    for (size_t i = 0; i < test_val.dependents.size(); i++) {
+        EXPECT_EQ(j["dependents"][i], test_val.dependents[i]);
+    }
+    EXPECT_EQ(j["nh_label_type"], "ZEBRA_LSP_NONE");
+    EXPECT_EQ(j["weight"], test_val.weight);
+    EXPECT_EQ(j["flags"], test_val.flags);
+    EXPECT_EQ(j["gate"], "2001:db8::1");
+    EXPECT_EQ(j["src"], "2001:db8::2");
+    EXPECT_EQ(j["rmap_src"], "2001:db8::3");
+    // Check SRv6 info
+    // Check nh_srv6's seg6local_action
+    EXPECT_EQ(j["nh_srv6"]["seg6local_action"], "SEG6_LOCAL_ACTION_END_DT6");
+    // Check nh_srv6->seg6local_ctx
+    EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["table"], test_val.nh_srv6->seg6local_ctx.table);
+    EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["nh4"], test_nh4);
+    EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["nh6"], test_nh6);
+        // Check nh_srv6->seg6local_ctx.flv
+        EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["flv"]["flv_ops"], test_val.nh_srv6->seg6local_ctx.flv.flv_ops);
+        EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["flv"]["lcblock_len"], test_val.nh_srv6->seg6local_ctx.flv.lcblock_len);
+        EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["flv"]["lcnode_func_len"], test_val.nh_srv6->seg6local_ctx.flv.lcnode_func_len);
+    EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["block_len"], test_val.nh_srv6->seg6local_ctx.block_len);
+    EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["node_len"], test_val.nh_srv6->seg6local_ctx.node_len);
+    EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["function_len"], test_val.nh_srv6->seg6local_ctx.function_len);
+    EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["argument_len"], test_val.nh_srv6->seg6local_ctx.argument_len);
+    // Check nh_srv6->seg6_segs
+    EXPECT_EQ(j["nh_srv6"]["seg6_segs"]["encap_behavior"], "SRV6_HEADEND_BEHAVIOR_H_ENCAPS");
+    auto j_segs_out = j["nh_srv6"]["seg6_segs"]["segs"].get<std::vector<std::string>>();
+    EXPECT_EQ(j["nh_srv6"]["seg6_segs"]["num_segs"], test_val.nh_srv6->seg6_segs->num_segs);
+    EXPECT_EQ(j_segs_out.size(), 3);
+    EXPECT_EQ(j_segs_out[0], "2001:db8:1::1");
+    EXPECT_EQ(j_segs_out[1], "2001:db8:1::2");
+    EXPECT_EQ(j_segs_out[2], "2001:db8:1::3");
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json for NextHopGroupFull in singleton case ..." << endl;
+    fib::NextHopGroupFull parsed_val;
+    fib::from_json(j, parsed_val);
+
+    /* Cehck values of STRUCT parsed from JSON */
+    cout << "[DEBUG] Checking parsed values from constructed JSON ..." << endl;
+    EXPECT_TRUE(parsed_val == test_val);
+
+    cout << "TEST_StructToFromJson::NextHopGroupFull_singleton finished." << endl;
+}

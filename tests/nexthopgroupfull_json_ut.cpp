@@ -358,3 +358,112 @@ TEST(StructToFromJson, seg6_seg_stack_ptr)
 
     cout << "TEST_StructToJson::seg6_seg_stack_ptr finished." << endl;
 }
+
+// --- Test: nexthop_srv6* (pointer) ---
+TEST(StructToFromJson, nexthop_srv6_ptr)
+{
+    cout << "TEST_StructToFromJson::nexthop_srv6_ptr started:" << endl;
+    /* Prepare the value */
+    cout << "[DEBUG] Preparing values ..." << endl;
+    fib::nexthop_srv6* test_val = new fib::nexthop_srv6{};
+    test_val->seg6local_action = fib::SEG6_LOCAL_ACTION_END_DT6;
+    char* test_nh4 = "192.168.10.1";
+    char* test_nh6 = "2001:db8::a";
+    set_ipv4(test_val->seg6local_ctx.nh4, test_nh4);
+    set_ipv6(test_val->seg6local_ctx.nh6, test_nh6);
+    test_val->seg6local_ctx.table = 200;
+    test_val->seg6local_ctx.flv = {1000, 32, 16};
+    test_val->seg6local_ctx.block_len = 48;
+    test_val->seg6local_ctx.node_len = 16;
+    test_val->seg6local_ctx.function_len = 16;
+    test_val->seg6local_ctx.argument_len = 0;
+    // Add seg6_segs
+    std::vector<std::string> test_segs = {"2001:db8::1", "2001:db8::2"};
+    size_t total = sizeof(fib::seg6_seg_stack) + test_segs.size() * sizeof(in6_addr);
+    test_val->seg6_segs = static_cast<fib::seg6_seg_stack*>(malloc(total));
+    test_val->seg6_segs->encap_behavior = fib::SRV6_HEADEND_BEHAVIOR_H_INSERT;
+    test_val->seg6_segs->num_segs = 2;
+    for (size_t i = 0; i < test_segs.size(); ++i) {
+        set_ipv6(test_val->seg6_segs->seg[i], test_segs[i].c_str());
+    }
+
+    /* Call to_json function */
+    cout << "[DEBUG] Calling to_json for nexthop_srv6 ..." << endl;
+    nlohmann::json j;
+    fib::to_json(j, test_val);
+
+    /* Output the constructed JSON string */
+    cout << "    [DEBUG] The constructed JSON string is:" << endl;
+    cout << "    " << j.dump(4) << endl;
+    /* Check the values of constructed JSON */
+    EXPECT_EQ(j["seg6local_action"], "SEG6_LOCAL_ACTION_END_DT6");
+    // seg6local_context
+    EXPECT_EQ(j["seg6local_ctx"]["nh4"], "192.168.10.1");
+    EXPECT_EQ(j["seg6local_ctx"]["nh6"], "2001:db8::a");
+    EXPECT_EQ(j["seg6local_ctx"]["table"], test_val->seg6local_ctx.table);
+        // seg6local_context.seg6local_flavors_info
+        EXPECT_EQ(j["seg6local_ctx"]["flv"]["flv_ops"], test_val->seg6local_ctx.flv.flv_ops);
+        EXPECT_EQ(j["seg6local_ctx"]["flv"]["lcblock_len"], test_val->seg6local_ctx.flv.lcblock_len);
+        EXPECT_EQ(j["seg6local_ctx"]["flv"]["lcnode_func_len"],test_val->seg6local_ctx.flv.lcnode_func_len);
+    EXPECT_EQ(j["seg6local_ctx"]["block_len"], test_val->seg6local_ctx.block_len);
+    EXPECT_EQ(j["seg6local_ctx"]["node_len"], test_val->seg6local_ctx.node_len);
+    EXPECT_EQ(j["seg6local_ctx"]["function_len"], test_val->seg6local_ctx.function_len);
+    EXPECT_EQ(j["seg6local_ctx"]["argument_len"], test_val->seg6local_ctx.argument_len);
+    // seg6_seg_stack *
+    EXPECT_EQ(j["seg6_segs"]["encap_behavior"], "SRV6_HEADEND_BEHAVIOR_H_INSERT");
+    EXPECT_EQ(j["seg6_segs"]["num_segs"], 2);
+    auto j_segs_out = j["seg6_segs"]["segs"].get<std::vector<std::string>>();
+    EXPECT_EQ(j_segs_out.size(), 2);
+    EXPECT_EQ(j_segs_out[0], "2001:db8::1");
+    EXPECT_EQ(j_segs_out[1], "2001:db8::2");
+
+    /* Call from_json function */
+    cout << "[DEBUG] Calling from_json for nexthop_srv6 * ..." << endl;
+    fib::nexthop_srv6 *parsed_val = nullptr;
+    fib::from_json(j, parsed_val);
+    ASSERT_NE(parsed_val, nullptr);
+
+    /* Check values of STRUCT parsed from JSON */
+    cout << "[DEBUG] Checking parsed values from constructed JSON ..." << endl;
+    EXPECT_EQ(parsed_val->seg6local_action, test_val->seg6local_action);
+    // seg6local_context
+    char buf4[INET_ADDRSTRLEN], buf6[INET6_ADDRSTRLEN];
+    inet_ntop(AF_INET, &parsed_val->seg6local_ctx.nh4, buf4, sizeof(buf4));
+    inet_ntop(AF_INET6, &parsed_val->seg6local_ctx.nh6, buf6, sizeof(buf6));
+    EXPECT_STREQ(buf4, test_nh4);
+    EXPECT_STREQ(buf6, test_nh6);
+    EXPECT_EQ(parsed_val->seg6local_ctx.table, test_val->seg6local_ctx.table);
+        // seg6local_context.seg6local_flavors_info
+        EXPECT_EQ(parsed_val->seg6local_ctx.flv.flv_ops, test_val->seg6local_ctx.flv.flv_ops);
+        EXPECT_EQ(parsed_val->seg6local_ctx.flv.lcblock_len, test_val->seg6local_ctx.flv.lcblock_len);
+        EXPECT_EQ(parsed_val->seg6local_ctx.flv.lcnode_func_len, test_val->seg6local_ctx.flv.lcnode_func_len);
+    EXPECT_EQ(parsed_val->seg6local_ctx.block_len, test_val->seg6local_ctx.block_len);
+    EXPECT_EQ(parsed_val->seg6local_ctx.node_len, test_val->seg6local_ctx.node_len);
+    EXPECT_EQ(parsed_val->seg6local_ctx.function_len, test_val->seg6local_ctx.function_len);
+    EXPECT_EQ(parsed_val->seg6local_ctx.argument_len, test_val->seg6local_ctx.argument_len);
+    // seg6_seg_stack *
+    EXPECT_EQ(parsed_val->seg6_segs->encap_behavior, test_val->seg6_segs->encap_behavior);
+    EXPECT_EQ(parsed_val->seg6_segs->num_segs, test_val->seg6_segs->num_segs);
+    for (int i = 0; i < parsed_val->seg6_segs->num_segs; ++i) {
+        char test_buf[INET6_ADDRSTRLEN], parsed_buf[INET6_ADDRSTRLEN];
+        inet_ntop(AF_INET6, &test_val->seg6_segs->seg[i], test_buf, sizeof(test_buf));
+        inet_ntop(AF_INET6, &parsed_val->seg6_segs->seg[i], parsed_buf, sizeof(parsed_buf));
+        EXPECT_STREQ(test_buf, parsed_buf);
+    }
+
+    /* Clean up */
+    if (test_val) {
+        if (test_val->seg6_segs) {
+            free(test_val->seg6_segs);
+        }
+        delete test_val;
+    }
+    if (parsed_val) {
+        if (parsed_val->seg6_segs) {
+            free(parsed_val->seg6_segs);
+            delete parsed_val;
+        }
+    }
+
+    cout << "TEST_StructToFromJson::nexthop_srv6_ptr finished." << endl;
+}

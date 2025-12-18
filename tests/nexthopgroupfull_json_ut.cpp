@@ -25,7 +25,7 @@ TEST(EnumToJson, nexthop_type)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json function for enum nexthop_types_t ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */
@@ -56,7 +56,7 @@ TEST(EnumToJson, blackhole_type)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json function for enum blackhole_type ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */
@@ -86,7 +86,7 @@ TEST(EnumToJson, lsp_type)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json function for enum lsp_types_t ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */
@@ -116,7 +116,7 @@ TEST(EnumToJson, seg6local_action)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json function for enum seg6local_action_t ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */
@@ -146,7 +146,7 @@ TEST(EnumToJson, srv6_headend_behavior)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json function for enum srv6_headend_behavior ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */
@@ -178,7 +178,7 @@ TEST(StructToFromJson, nh_grp_full)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json for nh_grp_full ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */
@@ -213,7 +213,7 @@ TEST(StructToFromJson, seg6local_flavors_info)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json for seg6local_flavors_info ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */
@@ -266,7 +266,7 @@ TEST(StructToFromJson, seg6local_context)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json for seg6local_context ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */
@@ -326,7 +326,7 @@ TEST(StructToFromJson, seg6_seg_stack_ptr)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json for seg6_seg_stack_ptr ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */
@@ -393,7 +393,7 @@ TEST(StructToFromJson, nexthop_srv6_ptr)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json for nexthop_srv6 ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */
@@ -495,7 +495,7 @@ TEST(StructToFromJson, NextHopGroupFull_multi_nexthop)
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json for NextHopGroupFull in multi-nexthop case ..." << endl;
-    nlohmann::json j;
+    nlohmann::ordered_json j;
     fib::to_json(j, test_val);
 
     /* Output the constructed JSON string */

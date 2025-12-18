@@ -39,7 +39,7 @@ inline bool string_to_gaddr(const std::string& ip, union g_addr& g, nexthop_type
 
 // --- Enum to_json / from_json ---
 {%- for enum_name, values in enums.items() %}
-inline void to_json(nlohmann::json& j, const {{ enum_name }}& e) {
+inline void to_json(nlohmann::ordered_json& j, const {{ enum_name }}& e) {
     static const char* names[] = {
         {%- for v in values %}
         "{{ v }}",
@@ -51,7 +51,7 @@ inline void to_json(nlohmann::json& j, const {{ enum_name }}& e) {
         j = "UNKNOWN";
     }
 }
-inline void from_json(const nlohmann::json& j, {{ enum_name }}& e) {
+inline void from_json(const nlohmann::ordered_json& j, {{ enum_name }}& e) {
     const std::string s = j;
     {%- for v in values %}
     if (s == "{{ v }}") { e = static_cast<{{ enum_name }}>({{ loop.index0 }}); return; }
@@ -67,8 +67,8 @@ inline void from_json(const nlohmann::json& j, {{ enum_name }}& e) {
 {%- if struct_name not in special_structs %}
 
 // --- {{struct_name}} ---
-inline void to_json(nlohmann::json& j, const {{struct_name}}& obj) {
-    j = nlohmann::json{
+inline void to_json(nlohmann::ordered_json& j, const {{struct_name}}& obj) {
+    j = nlohmann::ordered_json{
         {%- for field in struct_info.fields %}
         {%- if field.name == "nh4" %}
         {"{{field.name}}", ipv4_to_string(obj.nh4)},
@@ -80,7 +80,7 @@ inline void to_json(nlohmann::json& j, const {{struct_name}}& obj) {
         {%- endfor %}
     };
 }
-inline void from_json(const nlohmann::json& j, {{struct_name}}& obj) {
+inline void from_json(const nlohmann::ordered_json& j, {{struct_name}}& obj) {
     {%- for field in struct_info.fields %}
     {%- if field.name == "nh4" %}
     std::string nh4_str = j.at("nh4");
@@ -99,22 +99,22 @@ inline void from_json(const nlohmann::json& j, {{struct_name}}& obj) {
 
 
 // --- seg6_seg_stack ---
-inline void to_json(nlohmann::json& j, const seg6_seg_stack* stack) {
+inline void to_json(nlohmann::ordered_json& j, const seg6_seg_stack* stack) {
     if (!stack) {
         j = nullptr;
         return;
     }
-    nlohmann::json segs = nlohmann::json::array();
+    nlohmann::ordered_json segs = nlohmann::ordered_json::array();
     for (int i = 0; i < stack->num_segs; ++i) {
         segs.push_back(ipv6_to_string(stack->seg[i]));
     }
-    j = nlohmann::json{
+    j = nlohmann::ordered_json{
         {"encap_behavior", stack->encap_behavior},
         {"num_segs", stack->num_segs},
         {"segs", segs}
     };
 }
-inline void from_json(const nlohmann::json& j, seg6_seg_stack*& stack) {
+inline void from_json(const nlohmann::ordered_json& j, seg6_seg_stack*& stack) {
     if (j.is_null()) {
         stack = nullptr;
         return;
@@ -132,18 +132,18 @@ inline void from_json(const nlohmann::json& j, seg6_seg_stack*& stack) {
 }
 
 // --- nexthop_srv6 ---
-inline void to_json(nlohmann::json& j, const nexthop_srv6* srv6) {
+inline void to_json(nlohmann::ordered_json& j, const nexthop_srv6* srv6) {
     if (!srv6) {
         j = nullptr;
         return;
     }
-    j = nlohmann::json{
+    j = nlohmann::ordered_json{
         {"seg6local_action", srv6->seg6local_action},
         {"seg6local_ctx", srv6->seg6local_ctx},
         {"seg6_segs", srv6->seg6_segs}
     };
 }
-inline void from_json(const nlohmann::json& j, nexthop_srv6*& srv6) {
+inline void from_json(const nlohmann::ordered_json& j, nexthop_srv6*& srv6) {
     if (j.is_null()) {
         srv6 = nullptr;
         return;
@@ -155,8 +155,8 @@ inline void from_json(const nlohmann::json& j, nexthop_srv6*& srv6) {
 }
 
 // --- {{root_struct_name}} ---
-inline void to_json(nlohmann::json& j, const {{root_struct_name}}& nh) {
-    j = nlohmann::json{
+inline void to_json(nlohmann::ordered_json& j, const {{root_struct_name}}& nh) {
+    j = nlohmann::ordered_json{
         {%- set sorted_fields = root_struct.fields | sort(attribute='position') %}
         {%- for field in sorted_fields %}
         {%- if field.name == "bh_type" %}
@@ -181,7 +181,7 @@ inline void to_json(nlohmann::json& j, const {{root_struct_name}}& nh) {
         j["nh_srv6"] = nullptr;
     }
 }
-inline void from_json(const nlohmann::json& j, {{ root_struct_name }}& nh) {
+inline void from_json(const nlohmann::ordered_json& j, {{ root_struct_name }}& nh) {
     {%- set sorted_fields = root_struct.fields | sort(attribute='position') %}
     {%- for field in sorted_fields %}
     {%- if field.name in ["gate", "src", "rmap_src"] %}
@@ -205,12 +205,12 @@ inline void from_json(const nlohmann::json& j, {{ root_struct_name }}& nh) {
 
 // --- Top-level string helpers ---
 inline std::string to_json_string({{ root_struct_name }}& obj) {
-    return nlohmann::json(obj).dump();
+    return nlohmann::ordered_json(obj).dump();
 }
 
 inline bool from_json_string(std::string& json_str, {{ root_struct_name }}& out_obj) {
     try {
-        auto j = nlohmann::json::parse(json_str);
+        auto j = nlohmann::ordered_json::parse(json_str);
         j.get_to(out_obj);
         return true;
     } catch (const std::exception&) {

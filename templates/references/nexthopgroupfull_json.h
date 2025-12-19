@@ -38,7 +38,7 @@ inline bool string_to_gaddr(const std::string& ip, union g_addr& g, nexthop_type
 }
 
 // --- Enum to_json / from_json ---
-inline void to_json(nlohmann::json& j, const nexthop_types_t& e) {
+inline void to_json(nlohmann::ordered_json& j, const nexthop_types_t& e) {
     static const char* names[] = {
         "NEXTHOP_TYPE_INVALID",
         "NEXTHOP_TYPE_IFINDEX",
@@ -54,7 +54,7 @@ inline void to_json(nlohmann::json& j, const nexthop_types_t& e) {
         j = "UNKNOWN";
     }
 }
-inline void from_json(const nlohmann::json& j, nexthop_types_t& e) {
+inline void from_json(const nlohmann::ordered_json& j, nexthop_types_t& e) {
     const std::string s = j;
     if (s == "NEXTHOP_TYPE_INVALID") { e = static_cast<nexthop_types_t>(0); return; }
     if (s == "NEXTHOP_TYPE_IFINDEX") { e = static_cast<nexthop_types_t>(1); return; }
@@ -65,7 +65,7 @@ inline void from_json(const nlohmann::json& j, nexthop_types_t& e) {
     if (s == "NEXTHOP_TYPE_BLACKHOLE") { e = static_cast<nexthop_types_t>(6); return; }
     e = static_cast<nexthop_types_t>(0); // default to first (e.g., *_INVALID or *_UNSPEC)
 }
-inline void to_json(nlohmann::json& j, const lsp_types_t& e) {
+inline void to_json(nlohmann::ordered_json& j, const lsp_types_t& e) {
     static const char* names[] = {
         "ZEBRA_LSP_NONE",
         "ZEBRA_LSP_STATIC",
@@ -83,7 +83,7 @@ inline void to_json(nlohmann::json& j, const lsp_types_t& e) {
         j = "UNKNOWN";
     }
 }
-inline void from_json(const nlohmann::json& j, lsp_types_t& e) {
+inline void from_json(const nlohmann::ordered_json& j, lsp_types_t& e) {
     const std::string s = j;
     if (s == "ZEBRA_LSP_NONE") { e = static_cast<lsp_types_t>(0); return; }
     if (s == "ZEBRA_LSP_STATIC") { e = static_cast<lsp_types_t>(1); return; }
@@ -96,7 +96,7 @@ inline void from_json(const nlohmann::json& j, lsp_types_t& e) {
     if (s == "ZEBRA_LSP_EVPN") { e = static_cast<lsp_types_t>(8); return; }
     e = static_cast<lsp_types_t>(0); // default to first (e.g., *_INVALID or *_UNSPEC)
 }
-inline void to_json(nlohmann::json& j, const blackhole_type& e) {
+inline void to_json(nlohmann::ordered_json& j, const blackhole_type& e) {
     static const char* names[] = {
         "BLACKHOLE_UNSPEC",
         "BLACKHOLE_NULL",
@@ -109,7 +109,7 @@ inline void to_json(nlohmann::json& j, const blackhole_type& e) {
         j = "UNKNOWN";
     }
 }
-inline void from_json(const nlohmann::json& j, blackhole_type& e) {
+inline void from_json(const nlohmann::ordered_json& j, blackhole_type& e) {
     const std::string s = j;
     if (s == "BLACKHOLE_UNSPEC") { e = static_cast<blackhole_type>(0); return; }
     if (s == "BLACKHOLE_NULL") { e = static_cast<blackhole_type>(1); return; }
@@ -117,7 +117,7 @@ inline void from_json(const nlohmann::json& j, blackhole_type& e) {
     if (s == "BLACKHOLE_ADMINPROHIB") { e = static_cast<blackhole_type>(3); return; }
     e = static_cast<blackhole_type>(0); // default to first (e.g., *_INVALID or *_UNSPEC)
 }
-inline void to_json(nlohmann::json& j, const seg6local_action_t& e) {
+inline void to_json(nlohmann::ordered_json& j, const seg6local_action_t& e) {
     static const char* names[] = {
         "SEG6_LOCAL_ACTION_UNSPEC",
         "SEG6_LOCAL_ACTION_END",
@@ -143,7 +143,7 @@ inline void to_json(nlohmann::json& j, const seg6local_action_t& e) {
         j = "UNKNOWN";
     }
 }
-inline void from_json(const nlohmann::json& j, seg6local_action_t& e) {
+inline void from_json(const nlohmann::ordered_json& j, seg6local_action_t& e) {
     const std::string s = j;
     if (s == "SEG6_LOCAL_ACTION_UNSPEC") { e = static_cast<seg6local_action_t>(0); return; }
     if (s == "SEG6_LOCAL_ACTION_END") { e = static_cast<seg6local_action_t>(1); return; }
@@ -164,7 +164,7 @@ inline void from_json(const nlohmann::json& j, seg6local_action_t& e) {
     if (s == "SEG6_LOCAL_ACTION_END_DT46") { e = static_cast<seg6local_action_t>(16); return; }
     e = static_cast<seg6local_action_t>(0); // default to first (e.g., *_INVALID or *_UNSPEC)
 }
-inline void to_json(nlohmann::json& j, const srv6_headend_behavior& e) {
+inline void to_json(nlohmann::ordered_json& j, const srv6_headend_behavior& e) {
     static const char* names[] = {
         "SRV6_HEADEND_BEHAVIOR_H_INSERT",
         "SRV6_HEADEND_BEHAVIOR_H_ENCAPS",
@@ -178,7 +178,7 @@ inline void to_json(nlohmann::json& j, const srv6_headend_behavior& e) {
         j = "UNKNOWN";
     }
 }
-inline void from_json(const nlohmann::json& j, srv6_headend_behavior& e) {
+inline void from_json(const nlohmann::ordered_json& j, srv6_headend_behavior& e) {
     const std::string s = j;
     if (s == "SRV6_HEADEND_BEHAVIOR_H_INSERT") { e = static_cast<srv6_headend_behavior>(0); return; }
     if (s == "SRV6_HEADEND_BEHAVIOR_H_ENCAPS") { e = static_cast<srv6_headend_behavior>(1); return; }
@@ -188,76 +188,81 @@ inline void from_json(const nlohmann::json& j, srv6_headend_behavior& e) {
     e = static_cast<srv6_headend_behavior>(0); // default to first (e.g., *_INVALID or *_UNSPEC)
 }
 
+/* ======== AUTO-GEN each sub structs ======== */
+// Add declaration for each generating func
+
 // --- nh_grp_full ---
-inline void to_json(nlohmann::json& j, const nh_grp_full& n) {
-    j = nlohmann::json{
-        {"id", n.id},
-        {"weight", n.weight},
-        {"num_direct", n.num_direct}
+inline void to_json(nlohmann::ordered_json& j, const nh_grp_full& obj) {
+    j = nlohmann::ordered_json{
+        {"id", obj.id},
+        {"weight", obj.weight},
+        {"num_direct", obj.num_direct},
     };
 }
-inline void from_json(const nlohmann::json& j, nh_grp_full& n) {
-    j.at("id").get_to(n.id);
-    j.at("weight").get_to(n.weight);
-    j.at("num_direct").get_to(n.num_direct);
+inline void from_json(const nlohmann::ordered_json& j, nh_grp_full& obj) {
+    j.at("id").get_to(obj.id);
+    j.at("weight").get_to(obj.weight);
+    j.at("num_direct").get_to(obj.num_direct);
 }
 
 // --- seg6local_flavors_info ---
-inline void to_json(nlohmann::json& j, const seg6local_flavors_info& f) {
-    j = nlohmann::json{
-        {"flv_ops", f.flv_ops},
-        {"lcblock_len", f.lcblock_len},
-        {"lcnode_func_len", f.lcnode_func_len}
+inline void to_json(nlohmann::ordered_json& j, const seg6local_flavors_info& obj) {
+    j = nlohmann::ordered_json{
+        {"flv_ops", obj.flv_ops},
+        {"lcblock_len", obj.lcblock_len},
+        {"lcnode_func_len", obj.lcnode_func_len},
     };
 }
-inline void from_json(const nlohmann::json& j, seg6local_flavors_info& f) {
-    j.at("flv_ops").get_to(f.flv_ops);
-    j.at("lcblock_len").get_to(f.lcblock_len);
-    j.at("lcnode_func_len").get_to(f.lcnode_func_len);
+inline void from_json(const nlohmann::ordered_json& j, seg6local_flavors_info& obj) {
+    j.at("flv_ops").get_to(obj.flv_ops);
+    j.at("lcblock_len").get_to(obj.lcblock_len);
+    j.at("lcnode_func_len").get_to(obj.lcnode_func_len);
 }
 
 // --- seg6local_context ---
-inline void to_json(nlohmann::json& j, const seg6local_context& ctx) {
-    j = nlohmann::json{
-        {"nh4", ipv4_to_string(ctx.nh4)},
-        {"nh6", ipv6_to_string(ctx.nh6)},
-        {"table", ctx.table},
-        {"flv", ctx.flv},
-        {"block_len", ctx.block_len},
-        {"node_len", ctx.node_len},
-        {"function_len", ctx.function_len},
-        {"argument_len", ctx.argument_len}
+inline void to_json(nlohmann::ordered_json& j, const seg6local_context& obj) {
+    j = nlohmann::ordered_json{
+        {"nh4", ipv4_to_string(obj.nh4)},
+        {"nh6", ipv6_to_string(obj.nh6)},
+        {"table", obj.table},
+        {"flv", obj.flv},
+        {"block_len", obj.block_len},
+        {"node_len", obj.node_len},
+        {"function_len", obj.function_len},
+        {"argument_len", obj.argument_len},
     };
 }
-inline void from_json(const nlohmann::json& j, seg6local_context& ctx) {
+inline void from_json(const nlohmann::ordered_json& j, seg6local_context& obj) {
     std::string nh4_str = j.at("nh4");
+    string_to_ipv4(nh4_str, obj.nh4);
     std::string nh6_str = j.at("nh6");
-    string_to_ipv4(nh4_str, ctx.nh4);
-    string_to_ipv6(nh6_str, ctx.nh6);
-    j.at("table").get_to(ctx.table);
-    j.at("flv").get_to(ctx.flv);
-    j.at("block_len").get_to(ctx.block_len);
-    j.at("node_len").get_to(ctx.node_len);
-    j.at("function_len").get_to(ctx.function_len);
-    j.at("argument_len").get_to(ctx.argument_len);
+    string_to_ipv6(nh6_str, obj.nh6);
+    j.at("table").get_to(obj.table);
+    j.at("flv").get_to(obj.flv);
+    j.at("block_len").get_to(obj.block_len);
+    j.at("node_len").get_to(obj.node_len);
+    j.at("function_len").get_to(obj.function_len);
+    j.at("argument_len").get_to(obj.argument_len);
 }
 
+
 // --- seg6_seg_stack ---
-inline void to_json(nlohmann::json& j, const seg6_seg_stack* stack) {
+inline void to_json(nlohmann::ordered_json& j, const seg6_seg_stack* stack) {
     if (!stack) {
         j = nullptr;
         return;
     }
-    nlohmann::json segs = nlohmann::json::array();
+    nlohmann::ordered_json segs = nlohmann::ordered_json::array();
     for (int i = 0; i < stack->num_segs; ++i) {
         segs.push_back(ipv6_to_string(stack->seg[i]));
     }
-    j = nlohmann::json{
+    j = nlohmann::ordered_json{
         {"encap_behavior", stack->encap_behavior},
+        {"num_segs", stack->num_segs},
         {"segs", segs}
     };
 }
-inline void from_json(const nlohmann::json& j, seg6_seg_stack*& stack) {
+inline void from_json(const nlohmann::ordered_json& j, seg6_seg_stack*& stack) {
     if (j.is_null()) {
         stack = nullptr;
         return;
@@ -275,18 +280,18 @@ inline void from_json(const nlohmann::json& j, seg6_seg_stack*& stack) {
 }
 
 // --- nexthop_srv6 ---
-inline void to_json(nlohmann::json& j, const nexthop_srv6* srv6) {
+inline void to_json(nlohmann::ordered_json& j, const nexthop_srv6* srv6) {
     if (!srv6) {
         j = nullptr;
         return;
     }
-    j = nlohmann::json{
+    j = nlohmann::ordered_json{
         {"seg6local_action", srv6->seg6local_action},
         {"seg6local_ctx", srv6->seg6local_ctx},
         {"seg6_segs", srv6->seg6_segs}
     };
 }
-inline void from_json(const nlohmann::json& j, nexthop_srv6*& srv6) {
+inline void from_json(const nlohmann::ordered_json& j, nexthop_srv6*& srv6) {
     if (j.is_null()) {
         srv6 = nullptr;
         return;
@@ -298,53 +303,59 @@ inline void from_json(const nlohmann::json& j, nexthop_srv6*& srv6) {
 }
 
 // --- NextHopGroupFull ---
-inline void to_json(nlohmann::json& j, const NextHopGroupFull& nh) {
-    j = nlohmann::json{
+inline void to_json(nlohmann::ordered_json& j, const NextHopGroupFull& nh) {
+    j = nlohmann::ordered_json{
         {"id", nh.id},
         {"key", nh.key},
         {"weight", nh.weight},
         {"flags", nh.flags},
         {"ifname", nh.ifname},
+        {"nh_grp_full_list", nh.nh_grp_full_list},
         {"depends", nh.depends},
         {"dependents", nh.dependents},
         {"type", nh.type},
         {"vrf_id", nh.vrf_id},
         {"ifindex", nh.ifindex},
         {"nh_label_type", nh.nh_label_type},
-        {"gateway", gaddr_to_string(nh.gate, nh.type)},
+        {"gate", gaddr_to_string(nh.gate, nh.type)},
         {"src", gaddr_to_string(nh.src, nh.type)},
         {"rmap_src", gaddr_to_string(nh.rmap_src, nh.type)},
-        {"nh_srv6", nh.nh_srv6}
     };
+
+    // deal with the bh_type
     if (nh.type == NEXTHOP_TYPE_BLACKHOLE) {
         j["bh_type"] = nh.bh_type;
     }
+
+    // deal with the nh_srv6
+    if (nh.nh_srv6) {
+        j["nh_srv6"] = nh.nh_srv6;
+    } else {
+        j["nh_srv6"] = nullptr;
+    }
 }
-inline void from_json(const nlohmann::json& j, NextHopGroupFull& nh) {
+inline void from_json(const nlohmann::ordered_json& j, NextHopGroupFull& nh) {
     j.at("id").get_to(nh.id);
     j.at("key").get_to(nh.key);
     j.at("weight").get_to(nh.weight);
     j.at("flags").get_to(nh.flags);
     j.at("ifname").get_to(nh.ifname);
+    j.at("nh_grp_full_list").get_to(nh.nh_grp_full_list);
     j.at("depends").get_to(nh.depends);
     j.at("dependents").get_to(nh.dependents);
     j.at("type").get_to(nh.type);
     j.at("vrf_id").get_to(nh.vrf_id);
     j.at("ifindex").get_to(nh.ifindex);
     j.at("nh_label_type").get_to(nh.nh_label_type);
-
-    std::string gateway = j.at("gateway");
-    std::string src = j.at("src");
-    std::string rmap_src = j.at("rmap_src");
-    string_to_gaddr(gateway, nh.gate, nh.type);
-    string_to_gaddr(src, nh.src, nh.type);
-    string_to_gaddr(rmap_src, nh.rmap_src, nh.type);
-
-    nh.bh_type = BLACKHOLE_UNSPEC;
-    if (j.contains("bh_type") && nh.type == NEXTHOP_TYPE_BLACKHOLE) {
+    std::string gate_str = j.at("gate");
+    string_to_gaddr(gate_str, nh.gate, nh.type);
+    if (j.contains("bh_type")) {
         j.at("bh_type").get_to(nh.bh_type);
     }
-
+    std::string src_str = j.at("src");
+    string_to_gaddr(src_str, nh.src, nh.type);
+    std::string rmap_src_str = j.at("rmap_src");
+    string_to_gaddr(rmap_src_str, nh.rmap_src, nh.type);
     if (j.contains("nh_srv6")) {
         j.at("nh_srv6").get_to(nh.nh_srv6);
     } else {
@@ -354,12 +365,12 @@ inline void from_json(const nlohmann::json& j, NextHopGroupFull& nh) {
 
 // --- Top-level string helpers ---
 inline std::string to_json_string(NextHopGroupFull& obj) {
-    return nlohmann::json(obj).dump();
+    return nlohmann::ordered_json(obj).dump();
 }
 
 inline bool from_json_string(std::string& json_str, NextHopGroupFull& out_obj) {
     try {
-        auto j = nlohmann::json::parse(json_str);
+        auto j = nlohmann::ordered_json::parse(json_str);
         j.get_to(out_obj);
         return true;
     } catch (const std::exception&) {

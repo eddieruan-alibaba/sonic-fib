@@ -73,23 +73,23 @@ namespace fib {
     /* Auto-generated simple structs */
     struct nh_grp_full {
         std::uint32_t id;
-        std::uint32_t weight;
+        std::uint8_t weight;
         std::uint32_t num_direct;
     };
     struct seg6local_flavors_info {
         std::uint32_t flv_ops;
-        std::uint32_t lcblock_len;
-        std::uint32_t lcnode_func_len;
+        std::uint8_t lcblock_len;
+        std::uint8_t lcnode_func_len;
     };
     struct seg6local_context {
         struct in_addr nh4;
         struct in6_addr nh6;
         std::uint32_t table;
         struct seg6local_flavors_info flv;
-        std::uint32_t block_len;
-        std::uint32_t node_len;
-        std::uint32_t function_len;
-        std::uint32_t argument_len;
+        std::uint8_t block_len;
+        std::uint8_t node_len;
+        std::uint8_t function_len;
+        std::uint8_t argument_len;
     };
 
     /* --- Special Struct: nexthop_srv6 --- */
@@ -110,7 +110,7 @@ namespace fib {
     struct NextHopGroupFull {
         std::uint32_t id  = 0;
         std::uint32_t key  = 0;
-        std::uint32_t weight  = 0;
+        std::uint8_t weight  = 0;
         std::uint32_t flags  = 0;
 
     #define NEXTHOP_FLAG_ONLINK (1 << 3)
@@ -158,6 +158,10 @@ namespace fib {
 
         // Copy constructor
         NextHopGroupFull(const NextHopGroupFull& other);
+
+        // operator == and !=
+        bool operator==(const NextHopGroupFull& other) const;
+        bool operator!=(const NextHopGroupFull& other) const;
 
         ~NextHopGroupFull();
     };

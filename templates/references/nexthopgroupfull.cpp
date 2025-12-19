@@ -210,6 +210,108 @@ NextHopGroupFull& NextHopGroupFull::operator = (const NextHopGroupFull &other)
     return *this;
 }
 
+/* operator == */
+bool NextHopGroupFull::operator==(const NextHopGroupFull& other) const
+{
+    //SWSS_LOG_DEBUG("NextHopGroupFull operator == started");
+    cout << "[CPP DEBUG] NextHopGroupFull operator == started:" << endl;
+
+    /* Compare plain values */
+    if (id != other.id ||
+        key != other.key ||
+        weight != other.weight ||
+        flags != other.flags ||
+        ifname != other.ifname ||
+        depends != other.depends ||
+        dependents != other.dependents ||
+        type != other.type ||
+        vrf_id != other.vrf_id ||
+        ifindex != other.ifindex ||
+        nh_label_type != other.nh_label_type) {
+            cout << "[CPP DEBUG] NOT SAME plain values!" << endl;
+            return false;
+    }
+    /* Compare nh_grp_full_list */
+    if (nh_grp_full_list.size() != other.nh_grp_full_list.size()) {
+        cout << "[CPP DEBUG] NOT SAME size of nh_grp_full_list!" << endl;
+        return false;
+    }
+    for (size_t i = 0; i < nh_grp_full_list.size(); ++i) {
+        if (nh_grp_full_list[i].id != other.nh_grp_full_list[i].id ||
+            nh_grp_full_list[i].weight != other.nh_grp_full_list[i].weight ||
+            nh_grp_full_list[i].num_direct != other.nh_grp_full_list[i].num_direct) {
+            cout << "[CPP DEBUG] NOT SAME values of nh_grp_full_list!" << endl;
+            return false;
+        }
+    }
+    /* Compare gate/bh_type, depending on the nexthop type */
+    if (type == NEXTHOP_TYPE_BLACKHOLE) {
+        if (bh_type != other.bh_type) {
+            cout << "[CPP DEBUG] NOT SAME bh_type!" << endl;
+            return false;
+        }
+    } else {
+        if (memcmp(&gate, &other.gate, sizeof(union g_addr)) != 0) {
+            cout << "[CPP DEBUG] NOT SAME gate address!" << endl;
+            return false;
+        }
+    }
+    /* Compare src and rmap_src */
+    if (memcmp(&src, &other.src, sizeof(union g_addr)) != 0 ||
+        memcmp(&rmap_src, &other.rmap_src, sizeof(union g_addr)) != 0) {
+        cout << "[CPP DEBUG] NOT SAME src/rmap_src!" << endl;
+            return false;
+    }
+    /* Compare nh_srv6 */
+    if ((nh_srv6 == nullptr) != (other.nh_srv6 == nullptr)) {
+        cout << "[CPP DEBUG] NOT SAME nh_srv6 pointer state!" << endl;
+        return false;
+    }
+    if (nh_srv6 != nullptr) {
+        if (nh_srv6->seg6local_action != other.nh_srv6->seg6local_action) {
+            cout << "[CPP DEBUG] NOT SAME nh_srv6->seg6local_action!" << endl;
+            return false;
+        }
+        // Compare seg6local_ctx
+        if (memcmp(&nh_srv6->seg6local_ctx, &other.nh_srv6->seg6local_ctx,
+                    sizeof(struct seg6local_context)) != 0) {
+            cout << "[CPP DEBUG] NOT SAME nh_srv6->seg6local_ctx!" << endl;
+            return false;
+        }
+        // Compare seg6_segs
+        if ((nh_srv6->seg6_segs == nullptr) != (other.nh_srv6->seg6_segs == nullptr)) {
+            cout << "[CPP DEBUG] NOT SAME nh_srv6->seg6_segs pointer state!" << endl;
+            return false;
+        }
+        if (nh_srv6->seg6_segs != nullptr) {
+            if (nh_srv6->seg6_segs->encap_behavior != other.nh_srv6->seg6_segs->encap_behavior ||
+                nh_srv6->seg6_segs->num_segs != other.nh_srv6->seg6_segs->num_segs) {
+                cout << "[CPP DEBUG] NOT SAME nh_srv6->seg6_segs plain values!" << endl;
+                return false;
+            }
+            // Compare seg6_segs list
+            for (int i = 0; i < nh_srv6->seg6_segs->num_segs; ++i) {
+                if (memcmp(&nh_srv6->seg6_segs->seg[i], &other.nh_srv6->seg6_segs->seg[i],
+                            sizeof(struct in6_addr)) != 0) {
+                    cout << "[CPP DEBUG] NOT SAME nh_srv6->seg6_segs list!" << endl;
+                    return false;
+                }
+            }
+        }
+    }
+
+    cout << "[CPP DEBUG] The two NextHopGroupFull are totally same!" << endl;
+    cout << "[CPP DEBUG] NextHopGroupFull operator == finished." << endl;
+
+    return true;
+}
+
+/* operator != */
+bool NextHopGroupFull::operator!=(const NextHopGroupFull& other) const {
+    cout << "[CPP DEBUG] NextHopGroupFull operator != started and finished." << endl;
+    return !(*this == other);
+}
+
 /* Destructor of NextHopGroupFull */
 NextHopGroupFull::~NextHopGroupFull()
 {

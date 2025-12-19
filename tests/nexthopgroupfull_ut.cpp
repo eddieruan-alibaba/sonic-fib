@@ -264,10 +264,6 @@ TEST(NextHopGroupFull, singleton)
                 test_weight, test_flags, test_has_srv6, test_has_seg6_segs,
                 &test_nh_srv6, test_nh_seg6_segs, test_nh_segs);
 
-    // Free the memory allocated dynamically
-    free(test_nh_seg6_segs);
-    test_nh_seg6_segs = nullptr;
-
     /* Check the value of the constructed NextHopGroupFull */
     cout << "[DEBUG] Checking constructed values ..." << endl;
     // Check plain values
@@ -327,6 +323,10 @@ TEST(NextHopGroupFull, singleton)
     }
     // Check other unused values
     EXPECT_TRUE(nhg.nh_grp_full_list.empty());
+
+    // Free the memory allocated dynamically
+    free(test_nh_seg6_segs);
+    test_nh_seg6_segs = nullptr;
 
     cout << "TEST_NextHopGroupFull::singleton finished." << endl;
 

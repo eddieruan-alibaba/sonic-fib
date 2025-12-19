@@ -358,7 +358,11 @@ TEST(StructToFromJson, seg6_seg_stack_ptr)
 
     // Cleanup
     free(test_val);
-    if (parsed_val) free(parsed_val);
+    test_val = nullptr;
+    if (parsed_val) {
+        free(parsed_val);
+        parsed_val = nullptr;
+    }
 
     cout << "TEST_StructToJson::seg6_seg_stack_ptr finished." << endl;
 }
@@ -463,14 +467,18 @@ TEST(StructToFromJson, nexthop_srv6_ptr)
     if (test_val) {
         if (test_val->seg6_segs) {
             free(test_val->seg6_segs);
+            test_val->seg6_segs = nullptr;
         }
         free(test_val);
+        test_val = nullptr;
     }
     if (parsed_val) {
         if (parsed_val->seg6_segs) {
             free(parsed_val->seg6_segs);
-            free(parsed_val);
+            parsed_val->seg6_segs = nullptr;
         }
+        free(parsed_val);
+        parsed_val = nullptr;
     }
 
     cout << "TEST_StructToFromJson::nexthop_srv6_ptr finished." << endl;

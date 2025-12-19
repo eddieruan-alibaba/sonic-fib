@@ -226,10 +226,13 @@ TEST(NextHopGroupFull, singleton)
     inet_pton(AF_INET6, "2001:db8:1::3", test_nh_segs[2].s6_addr);
 
     // Prepare seg6_segs
-    struct seg6_seg_stack test_nh_seg6_segs = {};
-    test_nh_seg6_segs.encap_behavior = SRV6_HEADEND_BEHAVIOR_H_ENCAPS;
-    test_nh_seg6_segs.num_segs = 3;
-    memcpy(test_nh_seg6_segs.seg, test_nh_segs.data(), test_nh_segs.size() * sizeof(in6_addr));
+    size_t seg6_segs_size = sizeof(struct seg6_seg_stack) +
+                                test_nh_segs.size() * sizeof(struct in6_addr);
+    struct seg6_seg_stack* test_nh_seg6_segs =
+                                (struct seg6_seg_stack*)malloc(seg6_segs_size);
+    test_nh_seg6_segs->encap_behavior = SRV6_HEADEND_BEHAVIOR_H_ENCAPS;
+    test_nh_seg6_segs->num_segs = 3;
+    memcpy(test_nh_seg6_segs->seg, test_nh_segs.data(), test_nh_segs.size() * sizeof(in6_addr));
 
     //Prepare seg6local_flavors_info
     struct seg6local_flavors_info test_flv = {
@@ -259,8 +262,11 @@ TEST(NextHopGroupFull, singleton)
                 test_ifname, test_depends, test_dependents, test_nh_label_type,
                 test_bh_type, test_gateway, test_src, test_rmap_src,
                 test_weight, test_flags, test_has_srv6, test_has_seg6_segs,
-                &test_nh_srv6, &test_nh_seg6_segs, test_nh_segs);
+                &test_nh_srv6, test_nh_seg6_segs, test_nh_segs);
 
+    // Free the memory allocated dynamically
+    free(test_nh_seg6_segs);
+    test_nh_seg6_segs = nullptr;
 
     /* Check the value of the constructed NextHopGroupFull */
     cout << "[DEBUG] Checking constructed values ..." << endl;
@@ -306,10 +312,10 @@ TEST(NextHopGroupFull, singleton)
     EXPECT_EQ(nhg.nh_srv6->seg6local_ctx.argument_len, test_nh_srv6.seg6local_ctx.argument_len);
     // Check nh_srv6's seg6_seg_stack
     EXPECT_NE(nhg.nh_srv6->seg6_segs, nullptr);
-    EXPECT_EQ(nhg.nh_srv6->seg6_segs->encap_behavior, test_nh_seg6_segs.encap_behavior);
-    EXPECT_EQ(nhg.nh_srv6->seg6_segs->num_segs, test_nh_seg6_segs.num_segs);
+    EXPECT_EQ(nhg.nh_srv6->seg6_segs->encap_behavior, test_nh_seg6_segs->encap_behavior);
+    EXPECT_EQ(nhg.nh_srv6->seg6_segs->num_segs, test_nh_seg6_segs->num_segs);
     // Check nh_srv6's seg6_seg_stack's seg list
-    for (size_t i = 0; i < test_nh_seg6_segs.num_segs; i++) {
+    for (size_t i = 0; i < test_nh_seg6_segs->num_segs; i++) {
         if (i < test_nh_segs.size()) {
             EXPECT_TRUE(memcmp(&nhg.nh_srv6->seg6_segs->seg[i], &test_nh_segs[i], sizeof(in6_addr)) == 0)
                 << "Mismatch in segment " << i << endl;

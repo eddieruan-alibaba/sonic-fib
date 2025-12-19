@@ -369,7 +369,11 @@ TEST(StructToFromJson, nexthop_srv6_ptr)
     cout << "TEST_StructToFromJson::nexthop_srv6_ptr started:" << endl;
     /* Prepare the value */
     cout << "[DEBUG] Preparing values ..." << endl;
-    fib::nexthop_srv6* test_val = new fib::nexthop_srv6{};
+    fib::nexthop_srv6* test_val = (fib::nexthop_srv6*)malloc(sizeof(fib::nexthop_srv6));
+    if (!test_val) {
+        FAIL() << "Failed to allocate test_val";
+        return;
+    }
     test_val->seg6local_action = fib::SEG6_LOCAL_ACTION_END_DT6;
     char* test_nh4 = "192.168.10.1";
     char* test_nh6 = "2001:db8::a";
@@ -460,12 +464,12 @@ TEST(StructToFromJson, nexthop_srv6_ptr)
         if (test_val->seg6_segs) {
             free(test_val->seg6_segs);
         }
-        delete test_val;
+        free(test_val);
     }
     if (parsed_val) {
         if (parsed_val->seg6_segs) {
             free(parsed_val->seg6_segs);
-            delete parsed_val;
+            free(parsed_val);
         }
     }
 

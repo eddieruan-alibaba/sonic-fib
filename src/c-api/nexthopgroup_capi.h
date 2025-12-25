@@ -7,8 +7,9 @@ extern "C" {
 
 typedef struct NextHopGroupFull NextHopGroupFull;
 
-// Create a new (empty) NextHopGroupFull
-NextHopGroupFull* nexthopgroup_create(void);
+// Generate C++ NextHopGroupFull from C_NextHopGroupFull
+char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths);
+char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths);
 
 // Free the object
 void nexthopgroup_free(NextHopGroupFull* obj);

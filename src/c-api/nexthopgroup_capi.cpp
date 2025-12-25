@@ -2,10 +2,14 @@
 
 #include "src/nexthopgroupfull.h"
 #include "src/nexthopgroupfull_json.h"
+#include "src/c_nexthopgroupfull.h"
 #include <cstdlib>
 #include <cstring>
 #include <string>
 #include <stdexcept>
+#include <iostream>
+
+using namespace std;
 
 
 // Optional: bring into global scope for convenience
@@ -14,15 +18,133 @@ using NextHopGroupFull = fib::NextHopGroupFull;
 // Declare C-compatible API directly (no need for header here)
 extern "C" {
 
-NextHopGroupFull* nexthopgroup_create(void);
+char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths);
+char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths);
 void nexthopgroup_free(NextHopGroupFull* obj);
 char* nexthopgroup_to_json(NextHopGroupFull* obj);
 
-NextHopGroupFull* nexthopgroup_create(void)
+char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths)
 {
+    if (!c_nhg) {
+        cout << "[CPP DEBUG] Do NOT pass in an empty C_NextHopGroupFull *" << endl;
+        return nullptr;
+    }
+
     try {
-        return new NextHopGroupFull();
+        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_multi::Converting C_NextHopGroupFull to NextHopGroupFull started ..." << endl;
+
+        /* Convert C array to C++ vector */
+        cout << "[CPP DEBUG] Converting C nh_grp_full[] to C++ vector ..." << endl;
+        vector<struct nh_grp_full> cpp_nh_grp_full_list;
+        for (int i = 0; i < (MULTIPATH_NUM * MAX_NHG_RECURSION) + 1; i++) {
+            if (c_nhg->nh_grp_full_list[i].id == 0) {
+                break;
+            }
+            cpp_nh_grp_full_list.push_back(c_nhg->nh_grp_full_list[i]);
+        }
+        cout << "[CPP DEBUG] Converting C depends[] to C++ vector ..." << endl;
+        vector<uint32_t> cpp_depends;
+        for (int i = 0; i < MULTIPATH_NUM + 1; i++) {
+            if (c_nhg->depends[i] == 0) {
+                break;
+            }
+            cpp_depends.push_back(c_nhg->depends[i]);
+        }
+        cout << "[CPP DEBUG] Converting C dependents[] to C++ vector ..." << endl;
+        vector<uint32_t> cpp_dependents;
+        for (int i = 0; i < MULTIPATH_NUM + 1; i++) {
+            if (c_nhg->dependents[i] == 0) {
+                break;
+            }
+            cpp_dependents.push_back(c_nhg->dependents[i]);
+        }
+
+        /* Call NextHopGroupFull constructor(multi) to create NextHopGroupFull object */
+        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key,
+                                                                cpp_nh_grp_full_list,
+                                                                cpp_depends, cpp_dependents);
+
+        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_multi::Converting C Obj to C++ Obj finished." << endl;
+
+        /* Convert C++ Obj to JSON stirng */
+        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_multi::Converting C++ Obj to JSON string started ..." << endl;
+        char* json_str = nexthopgroup_to_json(cpp_nhg);
+        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_multi::Converting C++ Obj to JSON string finished." << endl;
+
+        nexthopgroup_free(cpp_nhg);
+
+        return json_str;
+
     } catch (...) {
+        cout << "[CPP ERROR] nexthopgroupfull_json_from_c_nhg_multi::Converting failed" << endl;
+        return nullptr;
+    }
+}
+
+char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths)
+{
+    if (!c_nhg) {
+        cout << "[CPP DEBUG] Do NOT pass in an empty C_NextHopGroupFull *" << endl;
+        return nullptr;
+    }
+
+    try {
+        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_singleton::Converting C_NextHopGroupFull to NextHopGroupFull started:" << endl;
+
+        /* Convert C array to C++ vector */
+        cout << "[CPP DEBUG] Converting C depends[] to C++ vector ..." << endl;
+        vector<uint32_t> cpp_depends;
+        for (int i = 0; i < MULTIPATH_NUM + 1; i++) {
+            if (c_nhg->depends[i] == 0) {
+                break;
+            }
+            cpp_depends.push_back(c_nhg->depends[i]);
+        }
+        cout << "[CPP DEBUG] Converting C dependents[] to C++ vector ..." << endl;
+        vector<uint32_t> cpp_dependents;
+        for (int i = 0; i < MULTIPATH_NUM + 1; i++) {
+            if (c_nhg->dependents[i] == 0) {
+                break;
+            }
+            cpp_dependents.push_back(c_nhg->dependents[i]);
+        }
+
+        /* Almostly we do NOT have ifname in zebra, so set it as empty string */
+        std::string cpp_ifname = "";
+
+        /* Convert seg6_segs flexible array to C++ vector */
+        cout << "[CPP DEBUG] Converting seg6_segs flexible array to C++ vector ..." << endl;
+        vector<struct in6_addr> cpp_nh_segs;
+        if (c_nhg->nh_srv6 && c_nhg->nh_srv6->seg6_segs) {
+            for (uint8_t i = 0; i < c_nhg->nh_srv6->seg6_segs->num_segs; i++) {
+                cpp_nh_segs.push_back(c_nhg->nh_srv6->seg6_segs->seg[i]);
+            }
+        }
+
+        /* Call NextHopGroupFull constructor(singleton) to create NextHopGroupFull object */
+        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->type, c_nhg->vrf_id,
+                                                         c_nhg->ifindex, cpp_ifname, cpp_depends, cpp_dependents,
+                                                         c_nhg->nh_label_type, c_nhg->bh_type, c_nhg->gate,
+                                                         c_nhg->src, c_nhg->rmap_src,c_nhg->weight, c_nhg->flags,
+                                                         c_nhg->nh_srv6 != nullptr,
+                                                         c_nhg->nh_srv6 && c_nhg->nh_srv6->seg6_segs != nullptr,
+                                                         c_nhg->nh_srv6,
+                                                         c_nhg->nh_srv6 ? c_nhg->nh_srv6->seg6_segs : nullptr,
+                                                         cpp_nh_segs);
+
+        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_singleton::Converting C Obj to C++ Obj finished." << endl;
+
+        /* Convert C++ Obj to JSON string */
+        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_singleton::Converting C++ Obj to JSON string started ..." << endl;
+        char* json_str = nexthopgroup_to_json(cpp_nhg); 
+        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_singleton::Converting C++ Obj to JSON string finished." << endl;
+
+        nexthopgroup_free(cpp_nhg);
+
+        return json_str;
+
+    } catch (...) {
+        cout << "[CPP ERROR] nexthopgroupfull_json_from_c_nhg_singleton::Converting failed" << endl;
         return nullptr;
     }
 }

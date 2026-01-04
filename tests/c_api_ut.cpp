@@ -16,13 +16,8 @@
 #include "src/c_nexthopgroupfull.h"
 
 using namespace std;
-using namespace fib;
-
-extern "C" {
-    char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths);
-    char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths);
-    void nexthopgroup_free(NextHopGroupFull* obj);
-}
+using fib::from_json;
+using fib::to_json;
 
 
 TEST(NextHopGroupFull_CAPI, multi_nexthop) {
@@ -93,7 +88,7 @@ TEST(NextHopGroupFull_CAPI, multi_nexthop) {
     /* Parse JSON string and deserialize to C++ object */
     cout << "[DEBUG] Parsing JSON string and deserializing to C++ object ..." << endl;
     nlohmann::ordered_json j = nlohmann::json::parse(json_str);
-    NextHopGroupFull cpp_nhg;
+    fib::NextHopGroupFull cpp_nhg;
     from_json(j, cpp_nhg);
 
     /* Verify round-trip conversion by comparing C structure and C++ object */

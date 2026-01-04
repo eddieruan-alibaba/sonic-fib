@@ -35,12 +35,18 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
 
         /* Convert C array to C++ vector */
         cout << "[CPP DEBUG] Converting C nh_grp_full[] to C++ vector ..." << endl;
-        vector<struct nh_grp_full> cpp_nh_grp_full_list;
+        vector<fib::nh_grp_full> cpp_nh_grp_full_list;
         for (int i = 0; i < (MULTIPATH_NUM * MAX_NHG_RECURSION) + 1; i++) {
             if (c_nhg->nh_grp_full_list[i].id == 0) {
                 break;
             }
-            cpp_nh_grp_full_list.push_back(c_nhg->nh_grp_full_list[i]);
+            /* convert C nh_grp_full to C++ fib::nh_grp_full explicitly */
+            fib::nh_grp_full cpp_nh = {
+                c_nhg->nh_grp_full_list[i].id,
+                c_nhg->nh_grp_full_list[i].weight,
+                c_nhg->nh_grp_full_list[i].num_direct
+            };
+            cpp_nh_grp_full_list.push_back(cpp_nh);
         }
         cout << "[CPP DEBUG] Converting C depends[] to C++ vector ..." << endl;
         vector<uint32_t> cpp_depends;
@@ -121,15 +127,26 @@ char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull
             }
         }
 
+        /* Convert g_addr from C type to C++ type */
+        fib::g_addr cpp_gate = reinterpret_cast<const fib::g_addr&>(c_nhg->gate);
+        fib::g_addr cpp_src = reinterpret_cast<const fib::g_addr&>(c_nhg->src);
+        fib::g_addr cpp_rmap_src = reinterpret_cast<const fib::g_addr&>(c_nhg->rmap_src);
+
         /* Call NextHopGroupFull constructor(singleton) to create NextHopGroupFull object */
-        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->type, c_nhg->vrf_id,
-                                                         c_nhg->ifindex, cpp_ifname, cpp_depends, cpp_dependents,
-                                                         c_nhg->nh_label_type, c_nhg->bh_type, c_nhg->gate,
-                                                         c_nhg->src, c_nhg->rmap_src,c_nhg->weight, c_nhg->flags,
+        /* Convert C types to C++ fib types by force */
+        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key,
+                                                         static_cast<fib::nexthop_types_t>(c_nhg->type),
+                                                         static_cast<fib::vrf_id_t>(c_nhg->vrf_id),
+                                                         static_cast<fib::ifindex_t>(c_nhg->ifindex),
+                                                         cpp_ifname, cpp_depends, cpp_dependents,
+                                                         static_cast<fib::lsp_types_t>(c_nhg->nh_label_type),
+                                                         static_cast<fib::blackhole_type>(c_nhg->bh_type),
+                                                         cpp_gate,
+                                                         cpp_src, cpp_rmap_src,c_nhg->weight, c_nhg->flags,
                                                          c_nhg->nh_srv6 != nullptr,
                                                          c_nhg->nh_srv6 && c_nhg->nh_srv6->seg6_segs != nullptr,
-                                                         c_nhg->nh_srv6,
-                                                         c_nhg->nh_srv6 ? c_nhg->nh_srv6->seg6_segs : nullptr,
+                                                         reinterpret_cast<const fib::nexthop_srv6*>(c_nhg->nh_srv6),
+                                                         reinterpret_cast<const fib::seg6_seg_stack*>(c_nhg->nh_srv6 ? c_nhg->nh_srv6->seg6_segs : nullptr),
                                                          cpp_nh_segs);
 
         cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_singleton::Converting C Obj to C++ Obj finished." << endl;

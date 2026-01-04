@@ -50,13 +50,13 @@
       "position" : 2,
       "type": "array",
       "items": { "type": "integer", "minimum": 0 },
-      "C_len": "(MULTIPATH_NUM * MAX_NHG_RECURSION) + 1"
+      "C_len": "MULTIPATH_NUM + 1"
     },
     "dependents": {
       "position" : 2,
       "type": "array",
       "items": { "type": "integer", "minimum": 0 },
-      "C_len": "(MULTIPATH_NUM * MAX_NHG_RECURSION) + 1"
+      "C_len": "MULTIPATH_NUM + 1"
     },
     "type": {
       "position" : 3,

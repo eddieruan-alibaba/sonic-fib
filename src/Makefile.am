@@ -2,7 +2,8 @@
 
 BUILT_SOURCES = src/nexthopgroupfull.h \
                 src/nexthopgroupfull.cpp \
-                src/nexthopgroupfull_json.h
+                src/nexthopgroupfull_json.h \
+                src/c_nexthopgroupfull.h
 
 # Common dependencies
 schema_file = $(top_srcdir)/schema/NextHopGroupFull.json
@@ -38,14 +39,26 @@ src/nexthopgroupfull_json.h: $(top_srcdir)/templates/nexthopgroupfull_json.h.j2 
 		$@ \
 		json_bindings
 
+# C header file for c_nexthopgroupfull.h
+src/c_nexthopgroupfull.h: $(top_srcdir)/templates/c_nexthopgroupfull.h.j2 \
+                          $(schema_file) \
+                          $(render_script)
+	$(AM_V_GEN)$(PYTHON) $(render_script) \
+		$(schema_file) \
+		$(top_srcdir)/templates \
+		$@ \
+		c_header
+
 CLEANFILES = src/nexthopgroupfull.h \
              src/nexthopgroupfull.cpp \
-             src/nexthopgroupfull_json.h
+             src/nexthopgroupfull_json.h \
+             src/c_nexthopgroupfull.h
 
 EXTRA_DIST = \
     templates/nexthopgroup/nexthopgroupfull.h.j2 \
     templates/nexthopgroup/nexthopgroupfull.cpp.j2 \
     templates/nexthopgroup/nexthopgroupfull_json.h.j2 \
+    templates/nexthopgroup/c_nexthopgroupfull.h.j2 \
     schema/nexthopgroup/NextHopGroupFull.json
 
 # End of Jinja2 generated part
@@ -60,7 +73,8 @@ src_libnexthopgroup_la_SOURCES = \
 nexthopgroup_headerdir = $(includedir)/nexthopgroup
 nexthopgroup_header_HEADERS = \
     src/nexthopgroupfull.h \
-    src/nexthopgroupfull_json.h
+    src/nexthopgroupfull_json.h \
+    src/c_nexthopgroupfull.h
 
 # Install C-API headers
 nexthopgroup_capi_headerdir = $(includedir)/nexthopgroup/c-api

@@ -111,7 +111,7 @@ namespace fib {
         std::uint32_t id  = 0;
         std::uint32_t key  = 0;
         std::uint8_t weight  = 0;
-        std::uint32_t flags  = 0;
+        std::uint8_t flags  = 0;
 
     #define NEXTHOP_FLAG_ONLINK (1 << 3)
         std::string ifname  = "";

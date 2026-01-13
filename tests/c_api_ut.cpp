@@ -31,31 +31,31 @@ TEST(NextHopGroupFull_CAPI, multi_nexthop) {
     c_nhg.key = 1234567;
 
     // set up nh_grp_full_list
-    struct nh_grp_full nh1 = {};
+    struct C_nh_grp_full nh1 = {};
     nh1.id = 200;
     nh1.weight = 1;
     nh1.num_direct = 0;
     c_nhg.nh_grp_full_list[0] = nh1;
 
-    struct nh_grp_full nh2 = {};
+    struct C_nh_grp_full nh2 = {};
     nh2.id = 300;
     nh2.weight = 1;
     nh2.num_direct = 2;
     c_nhg.nh_grp_full_list[1] = nh2;
 
-    struct nh_grp_full nh3 = {};
+    struct C_nh_grp_full nh3 = {};
     nh3.id = 310;
     nh3.weight = 2;
     nh3.num_direct = 0;
     c_nhg.nh_grp_full_list[2] = nh3;
 
-    struct nh_grp_full nh4 = {};
+    struct C_nh_grp_full nh4 = {};
     nh4.id = 320;
     nh4.weight = 2;
     nh4.num_direct = 0;
     c_nhg.nh_grp_full_list[3] = nh4;
 
-    struct nh_grp_full nh5 = {};
+    struct C_nh_grp_full nh5 = {};
     nh5.id = 400;
     nh5.weight = 1;
     nh5.num_direct = 0;
@@ -129,11 +129,11 @@ TEST(NextHopGroupFull_CAPI, singleton) {
 
     c_nhg.id = 100;
     c_nhg.key = 1234567;
-    c_nhg.type = NEXTHOP_TYPE_IPV6;
+    c_nhg.type = C_NEXTHOP_TYPE_IPV6;
     c_nhg.vrf_id = 101;
     c_nhg.ifindex = 101;
-    c_nhg.nh_label_type = ZEBRA_LSP_NONE;
-    c_nhg.bh_type = BLACKHOLE_NULL;
+    c_nhg.nh_label_type = C_ZEBRA_LSP_NONE;
+    c_nhg.bh_type = C_BLACKHOLE_NULL;
     c_nhg.weight = 8;
     c_nhg.flags = 8;
 
@@ -159,24 +159,24 @@ TEST(NextHopGroupFull_CAPI, singleton) {
     inet_pton(AF_INET6, "2001:db8:1::3", test_nh_segs[2].s6_addr);
 
     // prepare seg6_segs
-    size_t total = sizeof(struct seg6_seg_stack) +
+    size_t total = sizeof(struct C_seg6_seg_stack) +
                             test_nh_segs.size() * sizeof(struct in6_addr);
-    struct seg6_seg_stack* test_nh_seg6_segs =
-        (struct seg6_seg_stack*)malloc(total);
-    test_nh_seg6_segs->encap_behavior = SRV6_HEADEND_BEHAVIOR_H_ENCAPS;
+    struct C_seg6_seg_stack* test_nh_seg6_segs =
+        (struct C_seg6_seg_stack*)malloc(total);
+    test_nh_seg6_segs->encap_behavior = C_SRV6_HEADEND_BEHAVIOR_H_ENCAPS;
     test_nh_seg6_segs->num_segs = 3;
     memcpy(test_nh_seg6_segs->seg, test_nh_segs.data(),
            test_nh_segs.size() * sizeof(in6_addr));
 
     // Prepare seg6local_flavors_info
-    struct seg6local_flavors_info test_flv = {
+    struct C_seg6local_flavors_info test_flv = {
         .flv_ops = 100,
         .lcblock_len = 20,
         .lcnode_func_len = 16
     };
 
     // Prepare seg6local_ctx
-    struct seg6local_context test_seg6local_ctx = {};
+    struct C_seg6local_context test_seg6local_ctx = {};
     inet_pton(AF_INET, "192.168.10.1", &test_seg6local_ctx.nh4.s_addr);
     inet_pton(AF_INET6, "2001:db8::a", &test_seg6local_ctx.nh6.s6_addr);
     test_seg6local_ctx.table = 100;
@@ -184,15 +184,15 @@ TEST(NextHopGroupFull_CAPI, singleton) {
     test_seg6local_ctx.node_len = 12;
     test_seg6local_ctx.function_len = 20;
     test_seg6local_ctx.argument_len = 16;
-    memcpy(&test_seg6local_ctx.flv, &test_flv, sizeof(struct seg6local_flavors_info));
+    memcpy(&test_seg6local_ctx.flv, &test_flv, sizeof(struct C_seg6local_flavors_info));
 
     // Prepare nh_srv6
-    struct nexthop_srv6* test_nh_srv6 =
-        (struct nexthop_srv6*)malloc(sizeof(struct nexthop_srv6));
-    memset(test_nh_srv6, 0, sizeof(struct nexthop_srv6));
-    test_nh_srv6->seg6local_action = SEG6_LOCAL_ACTION_END_DT6;
+    struct C_nexthop_srv6* test_nh_srv6 =
+        (struct C_nexthop_srv6*)malloc(sizeof(struct C_nexthop_srv6));
+    memset(test_nh_srv6, 0, sizeof(struct C_nexthop_srv6));
+    test_nh_srv6->seg6local_action = C_SEG6_LOCAL_ACTION_END_DT6;
     memcpy(&test_nh_srv6->seg6local_ctx, &test_seg6local_ctx,
-           sizeof(struct seg6local_context));
+           sizeof(struct C_seg6local_context));
     test_nh_srv6->seg6_segs = test_nh_seg6_segs;
 
     c_nhg.nh_srv6 = test_nh_srv6;

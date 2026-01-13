@@ -18,15 +18,17 @@ typedef signed int ifindex_t;
 #define MULTIPATH_NUM 256
 #define MAX_NHG_RECURSION 8
 
-union g_addr {
+union C_g_addr {
     struct in_addr ipv4;
     struct in6_addr ipv6;
 };
 
-/* Auto-generated Enums */
-{%- for enum_name, values in enums.items() %}
+/* Auto-generated C Enums */
+{%- for enum_name, values in c_enums.items() %}
 enum {{ enum_name }} {
-    {{ values | join(',\n    ') }}
+    {%- for value in values %}
+    C_{{ value | replace(' ', '') }},
+    {%- endfor %}
 };
 
 {%- endfor %}
@@ -48,15 +50,15 @@ struct {{ name }} {
 {%- endfor %}
 
 /* --- Special Struct: nexthop_srv6 --- */
-struct nexthop_srv6 {
-    enum seg6local_action_t seg6local_action;
-    struct seg6local_context seg6local_ctx;
-    struct seg6_seg_stack *seg6_segs;
+struct C_nexthop_srv6 {
+    enum C_seg6local_action_t seg6local_action;
+    struct C_seg6local_context seg6local_ctx;
+    struct C_seg6_seg_stack *seg6_segs;
 };
 
 /* --- Other C-specific structs (not in schema as objects) --- */
-struct seg6_seg_stack {
-{%- for name, s in structs.items() if name == "seg6_seg_stack" %}
+struct C_seg6_seg_stack {
+{%- for name, s in structs.items() if name == "C_seg6_seg_stack" %}
     {%- for field in s.fields %}
     {{ field.c_type }} {{ field.name }}{% if field.flexible_array %}[0]{% endif %};
     {%- endfor %}
@@ -85,8 +87,8 @@ struct C_NextHopGroupFull {
     {{ field.c_type }} {{ field.name }};
 {%- endfor %}
     union {
-        union g_addr gate;
-        enum blackhole_type bh_type;
+        union C_g_addr gate;
+        enum C_blackhole_type bh_type;
     };
 {%- for field in root_struct.fields if field.position == 5 %}
     {{ field.c_type }} {{ field.name }};

@@ -11,7 +11,7 @@ def json_type_to_c(prop, defs):
     if "$ref" in prop:
         ref = prop["$ref"]
         if ref == "#/$defs/ip_address":
-            return "union g_addr"
+            return "union C_g_addr"
         elif ref == "#/$defs/uint8":
             return "uint8_t"
         elif ref == "#/$defs/in_address":
@@ -22,9 +22,9 @@ def json_type_to_c(prop, defs):
             typename = ref.split("/")[-1]
             target = defs.get(typename, {})
             if target.get("type") == "string" and "enum" in target:
-                return f"enum {typename}"
+                return f"enum C_{typename}"
             else:
-                return f"struct {typename}"
+                return f"struct C_{typename}"
         else:
             return "void*"
 
@@ -88,6 +88,15 @@ def json_type_to_cpp(prop, defs):
     elif typ == "null":
         return "std::nullptr_t"
     return "void"
+
+
+def extract_c_enums(defs):
+    """Extract C enums from $defs."""
+    c_enums = {}
+    for name, schema in defs.items():
+        if schema.get("type") == "string" and "enum" in schema:
+            c_enums[f"C_{name}"] = schema["enum"]
+    return c_enums
 
 
 def extract_enums(defs):
@@ -160,7 +169,7 @@ def build_c_def_structs(defs):
 
                 # nexthop_srv6's seg6_segs
                 if name == "nexthop_srv6" and fname == "seg6_segs":
-                    c_type = "struct seg6_seg_stack*"
+                    c_type = "struct C_seg6_seg_stack*"
 
                 field_data = {"name": fname, "c_type": c_type}
 
@@ -176,7 +185,7 @@ def build_c_def_structs(defs):
                         field_data["array_size"] = fprop["C_len"]
 
                 fields.append(field_data)
-            structs[name] = {"name": name, "fields": fields}
+            structs[f"C_{name}"] = {"name": f"C_{name}", "fields": fields}
 
     # Build the deps
     deps = {}
@@ -281,6 +290,7 @@ def main():
 
     defs = schema.get("$defs", {})
     enums = extract_enums(defs)
+    c_enums = extract_c_enums(defs)
 
     # cpp header
     root_struct = build_root_struct(schema, defs)
@@ -302,7 +312,7 @@ def main():
 
     c_root_struct_name = c_root_struct["name"]
 
-    c_special_structs = {"nexthop_srv6", "seg6_seg_stack", c_root_struct_name}
+    c_special_structs = {"C_nexthop_srv6", "C_seg6_seg_stack", c_root_struct_name}
 
     # Jinja setup
     env = Environment(loader=FileSystemLoader(template_dir))
@@ -333,7 +343,7 @@ def main():
     elif mode == "c_header":
         template_name = "c_nexthopgroupfull.h.j2"
         context = {
-            "enums": enums,
+            "c_enums": c_enums,
             "structs": c_all_structs,
             "special_structs": c_special_structs,
             "root_struct": c_root_struct,

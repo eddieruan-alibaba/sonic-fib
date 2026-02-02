@@ -17,13 +17,26 @@ using namespace fib;
     : id(id_in), key(key_in), nh_grp_full_list(nh_grp_full_list_in), depends(depends_in), dependents(dependents_in)
 {
     //SWSS_LOG_DEBUG("{{ root_struct_name }} construction started (multi-nexthop)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction started (multi-nexthop)" << endl;
+    cout << "[CPP DEBUG] {{ root_struct_name }} construction started (multi-nexthop) with id: " << id_in <<
+            ", key: " << key_in << endl;
+    for (size_t i = 0; i < nh_grp_full_list_in.size(); i++) {
+        cout << "[CPP DEBUG] nh_grp_full_list item " << i << ": id=" << nh_grp_full_list_in[i].id 
+             << ", weight=" << nh_grp_full_list_in[i].weight 
+             << ", num_direct=" << nh_grp_full_list_in[i].num_direct << endl;
+    }
+    for (size_t i = 0; i < depends_in.size(); i++) {
+        cout << "[CPP DEBUG] depends item " << i << ": " << depends_in[i] << endl;
+    }
+    for (size_t i = 0; i < dependents_in.size(); i++) {
+        cout << "[CPP DEBUG] dependents item " << i << ": " << dependents_in[i] << endl;
+    }
+
     memset(&gate, 0, sizeof(gate));
     bh_type = BLACKHOLE_UNSPEC;
     memset(&src, 0, sizeof(src));
     memset(&rmap_src, 0, sizeof(rmap_src));
     //SWSS_LOG_DEBUG("{{ root_struct_name }} construction finished (multi-nexthop)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction finished (multi-nexthop)" << endl;
+    cout << "[CPP DEBUG] {{ root_struct_name }} construction finished (multi-nexthop) for id: " << id_in << endl;
 }
 
 /* Constructor for singleton {{ root_struct_name }} */
@@ -43,7 +56,8 @@ using namespace fib;
       nh_srv6(nullptr)
 {
     //SWSS_LOG_DEBUG("{{ root_struct_name }} construction started (singleton)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction started (singleton)" << endl;
+    cout << "[CPP DEBUG] {{ root_struct_name }} construction started (singleton) for id: " << id_in <<
+            ", key: " << key_in << endl;
 
     /* Initialize union member */
     this->bh_type = bh_type_in;
@@ -103,7 +117,7 @@ using namespace fib;
         }
     }
     //SWSS_LOG_DEBUG("{{ root_struct_name }} construction finished (singleton)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction finished (singleton)" << endl;
+    cout << "[CPP DEBUG] {{ root_struct_name }} construction finished (singleton) for id: " << id_in << endl;
 }
 
 /* Copy Constructor */
@@ -115,7 +129,8 @@ using namespace fib;
         nh_label_type(other.nh_label_type), bh_type(other.bh_type)
 {
     //SWSS_LOG_DEBUG("NextHopGroupFull copy constructor started");
-    cout << "[CPP DEBUG] NextHopGroupFull copy constructor started" << endl;
+    cout << "[CPP DEBUG] NextHopGroupFull copy constructor started for id: " << other.id <<
+            ", key: " << other.key << endl;
 
     memcpy(&gate, &other.gate, sizeof(g_addr));
     memcpy(&src, &other.src, sizeof(g_addr));
@@ -154,13 +169,16 @@ using namespace fib;
         }
 
     //SWSS_LOG_DEBUG("NextHopGroupFull copy constructor finished");
-    cout << "[CPP DEBUG] NextHopGroupFull copy constructor finished" << endl;
+    cout << "[CPP DEBUG] NextHopGroupFull copy constructor finished for id: " << other.id << endl;
     }
 }
 
 /* Copy Assignment Operator */
 {{ root_struct_name }}& {{ root_struct_name }}::operator = (const NextHopGroupFull &other)
 {
+    cout << "[CPP DEBUG] NextHopGroupFull copy assignment operator started for id: " << other.id <<
+            ", key: " << other.key << endl;
+
     if (this == &other)     return *this;
 
     id = other.id;
@@ -207,6 +225,8 @@ using namespace fib;
         nh_srv6 = nullptr;
     }
 
+    cout << "[CPP DEBUG] NextHopGroupFull copy assignment operator finished for id: " << other.id << endl;
+
     return *this;
 }
 
@@ -214,7 +234,7 @@ using namespace fib;
 bool {{ root_struct_name }}::operator==(const {{ root_struct_name }}& other) const
 {
     //SWSS_LOG_DEBUG("{{ root_struct_name }} operator == started");
-    cout << "[CPP DEBUG] {{ root_struct_name }} operator == started:" << endl;
+    cout << "[CPP DEBUG] {{ root_struct_name }} operator == started for [id:" << id << "] vs [id:" << other.id << "]" << endl;
 
     /* Compare plain values */
     if (id != other.id ||
@@ -308,7 +328,8 @@ bool {{ root_struct_name }}::operator==(const {{ root_struct_name }}& other) con
 
 /* operator != */
 bool {{ root_struct_name }}::operator!=(const {{ root_struct_name }}& other) const {
-    cout << "[CPP DEBUG] {{ root_struct_name }} operator != started and finished." << endl;
+    cout << "[CPP DEBUG] {{ root_struct_name }} operator != started for [id:"
+        << id << "] vs [id:" << other.id << "], calling operator ==" << endl;
     return !(*this == other);
 }
 
@@ -317,6 +338,7 @@ bool {{ root_struct_name }}::operator!=(const {{ root_struct_name }}& other) con
 {
     //SWSS_LOG_DEBUG("{{ root_struct_name }} destructor started");
     cout << "[CPP DEBUG] {{ root_struct_name }} destructor started" << endl;
+    cout << "[CPP DEBUG] {{ root_struct_name }} destructor started for id: " << id << endl;
     if (nh_srv6 != nullptr)
     {
         if (nh_srv6->seg6_segs != nullptr)
@@ -331,5 +353,5 @@ bool {{ root_struct_name }}::operator!=(const {{ root_struct_name }}& other) con
     }
 
     //SWSS_LOG_DEBUG("{{ root_struct_name }} has been destroyed successfully.");
-    cout << "[CPP DEBUG] {{ root_struct_name }} has been destroyed successfully." << endl;
+    cout << "[CPP DEBUG] {{ root_struct_name }} " << id << " has been destroyed successfully." << endl;
 }

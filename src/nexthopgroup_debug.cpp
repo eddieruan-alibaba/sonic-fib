@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdarg>
 #include <memory>
+#include <vector> // for std::vector
 
 using namespace std;
 using namespace fib;

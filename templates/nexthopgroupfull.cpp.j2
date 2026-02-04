@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include "nexthopgroup_debug.h"
 
 using namespace std;
 using namespace fib;
@@ -16,27 +17,24 @@ using namespace fib;
                 const std::vector<uint32_t>& dependents_in)
     : id(id_in), key(key_in), nh_grp_full_list(nh_grp_full_list_in), depends(depends_in), dependents(dependents_in)
 {
-    //SWSS_LOG_DEBUG("{{ root_struct_name }} construction started (multi-nexthop)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction started (multi-nexthop) with id: " << id_in <<
-            ", key: " << key_in << endl;
+
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction started (multi-nexthop) with id: %d, %d %s", id_in, key_in);
     for (size_t i = 0; i < nh_grp_full_list_in.size(); i++) {
-        cout << "[CPP DEBUG] nh_grp_full_list item " << i << ": id=" << nh_grp_full_list_in[i].id 
-             << ", weight=" << static_cast<unsigned int>(nh_grp_full_list_in[i].weight)
-             << ", num_direct=" << nh_grp_full_list_in[i].num_direct << endl;
+        FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] nh_grp_full_list item %d: id= %d weight %d num_direct %d", i, nh_grp_full_list_in[i].id, static_cast<unsigned int>(nh_grp_full_list_in[i].weight), nh_grp_full_list_in[i].num_direct);
     }
     for (size_t i = 0; i < depends_in.size(); i++) {
-        cout << "[CPP DEBUG] depends item " << i << ": " << depends_in[i] << endl;
+        FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] depends item %d : %d ", i, depends_in[i]);
     }
     for (size_t i = 0; i < dependents_in.size(); i++) {
-        cout << "[CPP DEBUG] dependents item " << i << ": " << dependents_in[i] << endl;
+        FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] dependents item %d : %d", i, dependents_in[i]);
     }
 
     memset(&gate, 0, sizeof(gate));
     bh_type = BLACKHOLE_UNSPEC;
     memset(&src, 0, sizeof(src));
     memset(&rmap_src, 0, sizeof(rmap_src));
-    //SWSS_LOG_DEBUG("{{ root_struct_name }} construction finished (multi-nexthop)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction finished (multi-nexthop) for id: " << id_in << endl;
+
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction finished (multi-nexthop) for id: %d", id_in);
 }
 
 /* Constructor for singleton {{ root_struct_name }} */

@@ -67,6 +67,7 @@ lib_LTLIBRARIES += src/libnexthopgroup.la
 
 src_libnexthopgroup_la_SOURCES = \
     src/nexthopgroupfull.cpp      \
+    src/nexthopgroup_debug.cpp    \
     src/c-api/nexthopgroup_capi.cpp
 
 # Install headers to a dedicated subdir

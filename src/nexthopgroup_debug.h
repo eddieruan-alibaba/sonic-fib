@@ -29,9 +29,9 @@ LogLevel getLogLevel();
 // Internal logging macro (used inside library implementation)
 #define FIB_LOG(level, ...) \
     do { \
-        if (static_cast<int>(level) >= static_cast<int>(mylib::getLogLevel())) { \
+        if (static_cast<int>(level) >= static_cast<int>(fib::getLogLevel())) { \
             fib::internalLog(level, __FILE__, __LINE__, __func__, \
-                               mylib::formatLog(__VA_ARGS__)); \
+                               fib::formatLog(__VA_ARGS__)); \
         } \
     } while (0)
 

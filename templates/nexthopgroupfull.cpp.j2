@@ -21,7 +21,7 @@ using namespace fib;
             ", key: " << key_in << endl;
     for (size_t i = 0; i < nh_grp_full_list_in.size(); i++) {
         cout << "[CPP DEBUG] nh_grp_full_list item " << i << ": id=" << nh_grp_full_list_in[i].id 
-             << ", weight=" << nh_grp_full_list_in[i].weight 
+             << ", weight=" << static_cast<unsigned int>(nh_grp_full_list_in[i].weight)
              << ", num_direct=" << nh_grp_full_list_in[i].num_direct << endl;
     }
     for (size_t i = 0; i < depends_in.size(); i++) {

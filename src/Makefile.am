@@ -75,6 +75,7 @@ nexthopgroup_headerdir = $(includedir)/nexthopgroup
 nexthopgroup_header_HEADERS = \
     src/nexthopgroupfull.h \
     src/nexthopgroupfull_json.h \
+    src/nexthopgroup_debug.h \
     src/c_nexthopgroupfull.h
 
 # Install C-API headers

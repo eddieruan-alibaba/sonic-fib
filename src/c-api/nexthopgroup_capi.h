@@ -17,6 +17,17 @@ void nexthopgroup_free(NextHopGroupFull* obj);
 // JSON APIs ---
 char* nexthopgroup_to_json(NextHopGroupFull* obj);
 
+/* C callback signature matching FRR's needs */
+typedef void (*fib_frr_log_fn)(int level,
+                                const char *file,
+                                int line,
+                                const char *func,
+                                const char *fmt,
+                                va_list args);
+
+/* Register FRR-compatible callback from C code */
+void fib_frr_register_callback(fib_frr_log_fn cb);
+void fib_frr_set_log_level(int level);
 
 #ifdef __cplusplus
 }

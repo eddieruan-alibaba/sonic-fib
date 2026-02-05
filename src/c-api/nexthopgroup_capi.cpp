@@ -3,6 +3,7 @@
 #include "src/nexthopgroupfull.h"
 #include "src/nexthopgroupfull_json.h"
 #include "src/c_nexthopgroupfull.h"
+#include "src/nexthopgroup_debug.h"
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -189,5 +190,36 @@ char* nexthopgroup_to_json(NextHopGroupFull* obj)
     }
 }
 
+// Global C callback pointer (set by FRR)
+static fib_frr_log_fn g_frr_cb = nullptr;
+
+// C++ wrapper that forwards to C callback
+static void frr_cpp_callback(fib::LogLevel level,
+                             const char* file,
+                             int line,
+                             const char* func,
+                             const char* format,
+                             va_list args) {
+    if (!g_frr_cb) return;
+
+    // Forward directly to C callback (no copying needed – va_list is consumed once)
+    g_frr_cb(static_cast<int>(level), file, line, func, format, args);
+}
+void fib_frr_register_callback(fib_frr_log_fn cb) {
+    g_frr_cb = cb;
+    if (cb) {
+        // Bridge C callback → C++ API
+        fib::registerLogCallback(frr_cpp_callback);
+    } else {
+        fib::registerLogCallback(nullptr);
+    }
+}
+
+void fib_frr_set_log_level(int level) {
+    // Map syslog levels (0-3) to fib::LogLevel
+    if (level >= 0 && level <= 3) {
+        fib::setLogLevel(static_cast<fib::LogLevel>(level));
+    }
+}
 
 } // extern "C"

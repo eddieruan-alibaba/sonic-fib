@@ -15,9 +15,14 @@ enum class LogLevel : uint8_t {
 };
 
 // C++ interface for Define log callback function
-using LogCallback = std::function<void(LogLevel level, const char* file,
-                                       int line, const char* func,
-                                       const std::string& msg)>;
+using LogCallback = std::function<void(
+    LogLevel level,
+    const char* file,
+    int line,
+    const char* func,
+    const char* format,  // Raw format string
+    va_list args         // Raw arguments
+)>;
 
 // Register callback function
 void registerLogCallback(LogCallback cb);
@@ -27,17 +32,16 @@ LogLevel getLogLevel();
 
 
 // Internal logging macro (used inside library implementation)
-#define FIB_LOG(level, ...) \
+#define FIB_LOG(level, fmt, ...) \
     do { \
         if (static_cast<int>(level) >= static_cast<int>(fib::getLogLevel())) { \
-            fib::internalLog(level, __FILE__, __LINE__, __func__, \
-                               fib::formatLog(__VA_ARGS__)); \
+            fib::internalLog(level, __FILE__, __LINE__, __func__, fmt, ##__VA_ARGS__); \
         } \
     } while (0)
 
 // Internal helpers to log messages
 void internalLog(LogLevel level, const char* file, int line,
-                 const char* func, const std::string& msg);
-std::string formatLog(const char* fmt, ...); 
+                 const char* func, const char* format, ...);
+
 
 } // namespace fib

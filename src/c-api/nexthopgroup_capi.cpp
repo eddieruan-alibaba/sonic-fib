@@ -4,7 +4,6 @@
 #include "src/nexthopgroupfull_json.h"
 #include "src/c_nexthopgroupfull.h"
 #include "src/nexthopgroup_debug.h"
-#include "nexthopgroup_capi.h"
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -192,6 +191,14 @@ char* nexthopgroup_to_json(NextHopGroupFull* obj)
 }
 
 // Global C callback pointer (set by FRR)
+/* C callback signature matching FRR's needs */
+typedef void (*fib_frr_log_fn)(int level,
+                                const char *file,
+                                int line,
+                                const char *func,
+                                const char *fmt,
+                                va_list args);
+
 static fib_frr_log_fn g_frr_cb = nullptr;
 
 // C++ wrapper that forwards to C callback

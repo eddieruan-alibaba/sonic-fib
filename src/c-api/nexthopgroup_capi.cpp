@@ -4,6 +4,7 @@
 #include "src/nexthopgroupfull_json.h"
 #include "src/c_nexthopgroupfull.h"
 #include "src/nexthopgroup_debug.h"
+#include "nexthopgroup_capi.h"
 #include <cstdlib>
 #include <cstring>
 #include <string>

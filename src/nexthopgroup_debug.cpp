@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdarg>
 #include <memory>
+#include <array> // for std::array
 #include <vector> // for std::vector
 
 using namespace std;
@@ -79,16 +80,10 @@ fib::LogLevel fib::getLogLevel() {
 void fib::internalLog(LogLevel level, const char* file, int line,
                         const char* func, const char* format, ...) {
     auto& state = getState();
-    LogCallback cb;
-    {
-        std::lock_guard<std::mutex> lock(state.mutex);
-        cb = state.callback ? state.callback : defaultLog;
-    }
+    fib::LogCallback cb;
     va_list args;
     va_start(args, format);
-    fib::LogCallback cb;
     {
-        auto& state = getState();
         std::lock_guard<std::mutex> lock(state.mutex);
         if (static_cast<int>(level) < static_cast<int>(state.level) )
             return;

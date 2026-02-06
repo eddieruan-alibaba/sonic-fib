@@ -8,11 +8,11 @@
 using namespace std;
 using namespace fib;
 
-namespace {  // ← Anonymous namespace
+namespace {  // Anonymous namespace
 struct LoggerState {
     fib::LogCallback callback;
-    fib::LogLevel level = fib::LogLevel::DEBUG;
     std::mutex mutex;
+    fib::LogLevel level = fib::LogLevel::DEBUG;
 };
 LoggerState& getState() {
     static LoggerState state;

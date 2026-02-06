@@ -27,7 +27,7 @@ TEST(NextHopGroupDEBUG_API, register) {
     ASSERT_EQ(getLogLevel(), fib::LogLevel::DEBUG); // Default is  DEBUG
 
     setLogLevel(fib::LogLevel::INFO);
-    FIB_LOG(fib::LogLevel::DEBUG, "Current log level after setting: %d", static_cast<int>(getLogLevel()));
+    FIB_LOG(fib::LogLevel::INFO, "Current log level after setting: %d", static_cast<int>(getLogLevel()));
     ASSERT_EQ(getLogLevel(), fib::LogLevel::INFO); // Change to INFO
     registerLogCallback([](fib::LogLevel lvl, const char* file, int line,
                             const char* func, const char* format, va_list args) {
@@ -108,7 +108,7 @@ TEST(NextHopGroupDEBUG_CAPI, register_c) {
 
     fib_frr_set_log_level(1); // INFO
     level = getLogLevel();
-    FIB_LOG(fib::LogLevel::DEBUG, "Current log level after setting: %d", static_cast<int>(level));
+    FIB_LOG(fib::LogLevel::INFO, "Current log level after setting: %d", static_cast<int>(level));
     ASSERT_EQ(getLogLevel(), fib::LogLevel::INFO); // Change to INFO
 
     fib_frr_register_callback(frr_log_forwarder); // Register callback to test default logging

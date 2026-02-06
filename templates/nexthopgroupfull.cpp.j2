@@ -115,7 +115,7 @@ using namespace fib;
         }
     }
     //SWSS_LOG_DEBUG("{{ root_struct_name }} construction finished (singleton)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction finished (singleton) for id: " << id_in << endl;
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction finished (singleton) for id: %d",  id_in);
 }
 
 /* Copy Constructor */
@@ -126,9 +126,7 @@ using namespace fib;
         type(other.type), vrf_id(other.vrf_id), ifindex(other.ifindex),
         nh_label_type(other.nh_label_type), bh_type(other.bh_type)
 {
-    //SWSS_LOG_DEBUG("NextHopGroupFull copy constructor started");
-    cout << "[CPP DEBUG] NextHopGroupFull copy constructor started for id: " << other.id <<
-            ", key: " << other.key << endl;
+    FIB_LOG(fib::LogLevel::DEBUG, [CPP DEBUG] NextHopGroupFull copy constructor started for id: %d, key: %d",  other.id, other.key);
 
     memcpy(&gate, &other.gate, sizeof(g_addr));
     memcpy(&src, &other.src, sizeof(g_addr));
@@ -334,9 +332,7 @@ bool {{ root_struct_name }}::operator!=(const {{ root_struct_name }}& other) con
 /* Destructor of {{ root_struct_name }} */
 {{ root_struct_name }}::~{{ root_struct_name }}()
 {
-    //SWSS_LOG_DEBUG("{{ root_struct_name }} destructor started");
-    cout << "[CPP DEBUG] {{ root_struct_name }} destructor started" << endl;
-    cout << "[CPP DEBUG] {{ root_struct_name }} destructor started for id: " << id << endl;
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} destructor started for id: %d", id);
     if (nh_srv6 != nullptr)
     {
         if (nh_srv6->seg6_segs != nullptr)

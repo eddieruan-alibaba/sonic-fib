@@ -23,8 +23,11 @@ using namespace fib;
 TEST(NextHopGroupDEBUG_API, register) {
 
     FIB_LOG(fib::LogLevel::DEBUG, "Current log level: %d", static_cast<int>(getLogLevel()));
-    setLogLevel(fib::LogLevel::DEBUG);
+    ASSERT_EQ(getLogLevel(), fib::LogLevel::DEBUG); // Default is  DEBUG
+
+    setLogLevel(fib::LogLevel::INFO);
     FIB_LOG(fib::LogLevel::DEBUG, "Current log level after setting: %d", static_cast<int>(getLogLevel()));
+    ASSERT_EQ(getLogLevel(), fib::LogLevel::INFO); // Change to INFO
     registerLogCallback([](fib::LogLevel lvl, const char* file, int line,
                             const char* func, const char* format, va_list args) {
         const char* level_str = "DEBUG";
@@ -33,6 +36,10 @@ TEST(NextHopGroupDEBUG_API, register) {
             case fib::LogLevel::WARN:  level_str = "WARN";  break;
             case fib::LogLevel::ERROR: level_str = "ERROR"; break;
             default: break;
+        }
+
+        if (static_cast<int>(lvl) < static_cast<int>(getLogLevel())) {
+            return; // Skip messages below current log level
         }
         // Format the variadic arguments into a buffer
         std::array<char, 1024> buf;
@@ -45,7 +52,8 @@ TEST(NextHopGroupDEBUG_API, register) {
         }
     });
 
-    FIB_LOG(fib::LogLevel::DEBUG, "Test log");
+    FIB_LOG(fib::LogLevel::DEBUG, "Test log with registered callback - DEBUG level");
+    FIB_LOG(fib::LogLevel::INFO, "Test log with registered callback - INFO level");
 }
 
 // Ensure C linkage for the callback function to match C ABI expectations
@@ -70,6 +78,16 @@ static void frr_log_forwarder(int level,
                               va_list args)
 {
     int syslog_prio = fib_level_to_syslog(level);
+
+    int current_log_level = -1;
+    try {
+        current_log_level = static_cast<int>(fib::getLogLevel());
+    } catch (...) {
+        current_log_level = -1;  // fallback on error
+    }
+    if (level < current_log_level) {
+        return; // Skip messages below current log level
+    }
     fprintf(stderr, "[LVL=%d %s:%d %s] ", syslog_prio, file, line, func);
     // Core: print formatted message to stderr using va_list
     vfprintf(stderr, fmt, args);
@@ -81,13 +99,16 @@ static void frr_log_forwarder(int level,
 TEST(NextHopGroupDEBUG_CAPI, register_c) { 
     LogLevel level = getLogLevel();
     FIB_LOG(fib::LogLevel::DEBUG, "Current log level: %d", static_cast<int>(level));
-    fib_frr_set_log_level(0);
+    ASSERT_EQ(getLogLevel(), fib::LogLevel::DEBUG); // Default is  DEBUG
+    fib_frr_register_callback(nullptr); // Unregister callback to test default logging
+    FIB_LOG(fib::LogLevel::DEBUG, "Test log with default logger - DEBUG level");
+    FIB_LOG(fib::LogLevel::INFO, "Test log with default logger - INFO level");
+    fib_frr_set_log_level(1); // INFO
     level = getLogLevel();
     FIB_LOG(fib::LogLevel::DEBUG, "Current log level after setting: %d", static_cast<int>(level));
-
-    fib_frr_register_callback(nullptr); // Unregister callback to test default logging
-    FIB_LOG(fib::LogLevel::DEBUG, "Test log with default logger");
+    ASSERT_EQ(getLogLevel(), fib::LogLevel::INFO); // Change to INFO
 
     fib_frr_register_callback(frr_log_forwarder); // Register callback to test default logging
-    FIB_LOG(fib::LogLevel::DEBUG, "Test log with C callback logger");
+    FIB_LOG(fib::LogLevel::DEBUG, "Test log with C callback logger - DEBUG level");
+    FIB_LOG(fib::LogLevel::INFO, "Test log with C callback logger - INFO level");
 }

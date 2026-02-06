@@ -4,7 +4,6 @@
 #include <memory>
 #include <array> // for std::array
 #include <vector> // for std::vector
-#include <iostream>
 
 using namespace std;
 using namespace fib;
@@ -60,6 +59,7 @@ void defaultLog(LogLevel level, const char* file, int line,
 } // anonymous namespace
 
 // Public API implementations
+// Don't use FIB_LOG here to avoid recursion mutex
 void fib::registerLogCallback(LogCallback cb) {
     auto& state = getState();
     std::lock_guard<std::mutex> lock(state.mutex);
@@ -67,7 +67,6 @@ void fib::registerLogCallback(LogCallback cb) {
 }
 
 void fib::setLogLevel(LogLevel level) {
-    cout << "[CPP DEBUG] Setting log level to " << static_cast<int>(level) << endl;
     auto& state = getState();
     std::lock_guard<std::mutex> lock(state.mutex);
     state.level = level;
@@ -76,7 +75,6 @@ void fib::setLogLevel(LogLevel level) {
 fib::LogLevel fib::getLogLevel() {
     auto& state = getState();
     std::lock_guard<std::mutex> lock(state.mutex);
-    cout << "[CPP DEBUG] Getting log level " << static_cast<int>(state.level) << endl;
     return state.level;
 }
 // Internal logging implementation

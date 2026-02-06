@@ -28,6 +28,7 @@ typedef void (*fib_frr_log_fn)(int level,
 /* Register FRR-compatible callback from C code */
 void fib_frr_register_callback(fib_frr_log_fn cb);
 void fib_frr_set_log_level(int level);
+int fib_frr_get_log_level();
 
 #ifdef __cplusplus
 }

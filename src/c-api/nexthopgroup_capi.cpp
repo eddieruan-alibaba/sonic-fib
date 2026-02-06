@@ -230,4 +230,7 @@ void fib_frr_set_log_level(int level) {
     }
 }
 
+int fib_frr_get_log_level() {
+    return static_cast<int>(fib::getLogLevel());
+}
 } // extern "C"

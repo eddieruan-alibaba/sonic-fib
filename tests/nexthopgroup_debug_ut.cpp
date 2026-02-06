@@ -82,7 +82,7 @@ static void frr_log_forwarder(int level,
 
     int current_log_level = -1;
     try {
-        current_log_level = static_cast<int>(fib::getLogLevel());
+        current_log_level = fib_frr_get_log_level();
     } catch (...) {
         current_log_level = -1;  // fallback on error
     }

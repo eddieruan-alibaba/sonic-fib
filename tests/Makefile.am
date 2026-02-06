@@ -1,4 +1,8 @@
-bin_PROGRAMS += tests/tests
+# Build test binary during 'make', but never install it
+noinst_PROGRAMS = tests/tests
+
+# Register test binary to be executed by 'make check'
+TESTS = tests/tests
 
 CFLAGS_GTEST =
 LDADD_GTEST = -L/usr/src/gtest -lgtest -lgtest_main -lgmock -lgmock_main

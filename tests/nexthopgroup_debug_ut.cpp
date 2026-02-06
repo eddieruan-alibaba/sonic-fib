@@ -51,7 +51,7 @@ TEST(NextHopGroupDEBUG_API, register) {
 // Ensure C linkage for the callback function to match C ABI expectations
 extern "C" {
 
-/* Map fib-sonic levels (0-7) to syslog priorities used by FRR */
+/* Map fib-sonic levels  to syslog priorities used by FRR */
 static int fib_level_to_syslog(int level)
 {
     switch (level) {
@@ -70,8 +70,12 @@ static void frr_log_forwarder(int level,
                               va_list args)
 {
     int syslog_prio = fib_level_to_syslog(level);
-    vsyslog(syslog_prio, fmt, args);  // vzlog() must accept va_list directly
+    fprintf(stderr, "[LVL=%d %s:%d %s] ", level, file, line, func);
+    // Core: print formatted message to stderr using va_list
+    vfprintf(stderr, fmt, args);
+    fprintf(stderr, "\n");  // Add newline (vfprintf does not add one automatically)
 }
+
 } // extern "C"
 TEST(NextHopGroupDEBUG_CAPI, register_c) { 
     LogLevel level = getLogLevel();
@@ -83,6 +87,6 @@ TEST(NextHopGroupDEBUG_CAPI, register_c) {
     fib_frr_register_callback(nullptr); // Unregister callback to test default logging
     FIB_LOG(fib::LogLevel::DEBUG, "Test log with default logger");
 
-    fib_frr_register_callback(frr_log_forwarder); // Register callback to test default logging    
+    fib_frr_register_callback(frr_log_forwarder); // Register callback to test default logging
     FIB_LOG(fib::LogLevel::DEBUG, "Test log");
 }

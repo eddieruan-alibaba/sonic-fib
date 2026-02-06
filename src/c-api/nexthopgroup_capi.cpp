@@ -224,7 +224,7 @@ void fib_frr_register_callback(fib_frr_log_fn cb) {
 }
 
 void fib_frr_set_log_level(int level) {
-    // Map syslog levels (0-3) to fib::LogLevel
+    // Map (0-3) to fib::LogLevel
     if (level >= 0 && level <= 3) {
         fib::setLogLevel(static_cast<fib::LogLevel>(level));
     }

@@ -66,6 +66,7 @@ void fib::registerLogCallback(LogCallback cb) {
 }
 
 void fib::setLogLevel(LogLevel level) {
+    cout << "[CPP DEBUG] Setting log level to " << static_cast<int>(level) << endl;
     auto& state = getState();
     std::lock_guard<std::mutex> lock(state.mutex);
     state.level = level;
@@ -74,6 +75,7 @@ void fib::setLogLevel(LogLevel level) {
 fib::LogLevel fib::getLogLevel() {
     auto& state = getState();
     std::lock_guard<std::mutex> lock(state.mutex);
+    cout << "[CPP DEBUG] Getting log level " << static_cast<int>(state.level) << endl;
     return state.level;
 }
 // Internal logging implementation

@@ -4,6 +4,7 @@
 #include <memory>
 #include <array> // for std::array
 #include <vector> // for std::vector
+#include <iostream>
 
 using namespace std;
 using namespace fib;

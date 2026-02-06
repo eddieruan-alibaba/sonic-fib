@@ -19,12 +19,12 @@
 using namespace std;
 using namespace fib;
 
-TEST(NextHopGroupDEBUG_API, register) { 
-    LogLevel level = getLogLevel();
-    FIB_LOG(fib::LogLevel::DEBUG, "Current log level: %d", static_cast<int>(level));
+// Test C++ API registration and logging
+TEST(NextHopGroupDEBUG_API, register) {
+
+    FIB_LOG(fib::LogLevel::DEBUG, "Current log level: %d", static_cast<int>(getLogLevel()));
     setLogLevel(fib::LogLevel::DEBUG);
-    level = getLogLevel();
-    FIB_LOG(fib::LogLevel::DEBUG, "Current log level after setting: %d", static_cast<int>(level));
+    FIB_LOG(fib::LogLevel::DEBUG, "Current log level after setting: %d", static_cast<int>(getLogLevel()));
     registerLogCallback([](fib::LogLevel lvl, const char* file, int line,
                             const char* func, const char* format, va_list args) {
         const char* level_str = "DEBUG";
@@ -77,6 +77,7 @@ static void frr_log_forwarder(int level,
 }
 
 } // extern "C"
+// Test C API registration and logging
 TEST(NextHopGroupDEBUG_CAPI, register_c) { 
     LogLevel level = getLogLevel();
     FIB_LOG(fib::LogLevel::DEBUG, "Current log level: %d", static_cast<int>(level));
@@ -88,5 +89,5 @@ TEST(NextHopGroupDEBUG_CAPI, register_c) {
     FIB_LOG(fib::LogLevel::DEBUG, "Test log with default logger");
 
     fib_frr_register_callback(frr_log_forwarder); // Register callback to test default logging
-    FIB_LOG(fib::LogLevel::DEBUG, "Test log");
+    FIB_LOG(fib::LogLevel::DEBUG, "Test log with C callback logger");
 }

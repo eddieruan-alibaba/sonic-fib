@@ -24,10 +24,10 @@ TEST(NextHopGroupDEBUG_API, register) {
     setLogLevel(fib::LogLevel::DEBUG);
     level = getLogLevel();
     FIB_LOG(fib::LogLevel::DEBUG, "Current log level after setting: %d", static_cast<int>(level));
-    registerLogCallback([](fib::LogLevel level, const char* file, int line,
+    registerLogCallback([](fib::LogLevel lvl, const char* file, int line,
                             const char* func, const char* format, va_list args) {
         const char* level_str = "DEBUG";
-        switch (level) {
+        switch (lvl) {
             case fib::LogLevel::INFO:  level_str = "INFO";  break;
             case fib::LogLevel::WARN:  level_str = "WARN";  break;
             case fib::LogLevel::ERROR: level_str = "ERROR"; break;

@@ -70,7 +70,7 @@ static void frr_log_forwarder(int level,
                               va_list args)
 {
     int syslog_prio = fib_level_to_syslog(level);
-    fprintf(stderr, "[LVL=%d %s:%d %s] ", level, file, line, func);
+    fprintf(stderr, "[LVL=%d %s:%d %s] ", syslog_prio, file, line, func);
     // Core: print formatted message to stderr using va_list
     vfprintf(stderr, fmt, args);
     fprintf(stderr, "\n");  // Add newline (vfprintf does not add one automatically)

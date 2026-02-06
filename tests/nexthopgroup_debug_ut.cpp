@@ -22,6 +22,7 @@ using namespace fib;
 // Test C++ API registration and logging
 TEST(NextHopGroupDEBUG_API, register) {
 
+    setLogLevel(fib::LogLevel::DEBUG);
     FIB_LOG(fib::LogLevel::DEBUG, "Current log level: %d", static_cast<int>(getLogLevel()));
     ASSERT_EQ(getLogLevel(), fib::LogLevel::DEBUG); // Default is  DEBUG
 
@@ -97,12 +98,14 @@ static void frr_log_forwarder(int level,
 } // extern "C"
 // Test C API registration and logging
 TEST(NextHopGroupDEBUG_CAPI, register_c) { 
+    fib_frr_set_log_level(0); // Set back to DEBUG
     LogLevel level = getLogLevel();
     FIB_LOG(fib::LogLevel::DEBUG, "Current log level: %d", static_cast<int>(level));
     ASSERT_EQ(getLogLevel(), fib::LogLevel::DEBUG); // Default is  DEBUG
     fib_frr_register_callback(nullptr); // Unregister callback to test default logging
     FIB_LOG(fib::LogLevel::DEBUG, "Test log with default logger - DEBUG level");
     FIB_LOG(fib::LogLevel::INFO, "Test log with default logger - INFO level");
+
     fib_frr_set_log_level(1); // INFO
     level = getLogLevel();
     FIB_LOG(fib::LogLevel::DEBUG, "Current log level after setting: %d", static_cast<int>(level));

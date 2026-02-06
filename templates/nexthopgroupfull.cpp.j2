@@ -126,7 +126,7 @@ using namespace fib;
         type(other.type), vrf_id(other.vrf_id), ifindex(other.ifindex),
         nh_label_type(other.nh_label_type), bh_type(other.bh_type)
 {
-    FIB_LOG(fib::LogLevel::DEBUG, [CPP DEBUG] NextHopGroupFull copy constructor started for id: %d, key: %d",  other.id, other.key);
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] NextHopGroupFull copy constructor started for id: %d, key: %d",  other.id, other.key);
 
     memcpy(&gate, &other.gate, sizeof(g_addr));
     memcpy(&src, &other.src, sizeof(g_addr));

@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdarg>
 #include <cstring>
 #include <unistd.h>
 #include <vector>
@@ -12,18 +13,17 @@
 
 #include "src/c-api/nexthopgroup_capi.h"
 #include "src/nexthopgroup_debug.h"
+#include <array> // for std::array
 
 using namespace std;
-using fib::from_json;
-using fib::to_json;
-
-
+using namespace fib;
 
 TEST(NextHopGroupDEBUG_API, register) { 
-    cout << "TEST_nexthop_debug_register_api "  << endl;
-    setLogLevel(fib::LogLevel::DEBUG);
     LogLevel level = getLogLevel();
-    cout << "Current log level: " << static_cast<int>(level) << endl;
+    FIB_LOG(fib::LogLevel::DEBUG, "Current log level: %d", static_cast<int>(level));
+    setLogLevel(fib::LogLevel::DEBUG);
+    level = getLogLevel();
+    FIB_LOG(fib::LogLevel::DEBUG, "Current log level after setting: %d", static_cast<int>(level));
     registerLogCallback([](fib::LogLevel level, const char* file, int line,
                             const char* func, const char* format, va_list args) {
         const char* level_str = "DEBUG";
@@ -43,4 +43,6 @@ TEST(NextHopGroupDEBUG_API, register) {
             cout << "[" << level_str << "] " << file << ":" << line << " " << func << " - " << buf.data() << endl;
         }
     });
+
+    FIB_LOG(fib::LogLevel::DEBUG, "Test log");
 }

@@ -63,14 +63,12 @@ void fib::registerLogCallback(LogCallback cb) {
     auto& state = getState();
     std::lock_guard<std::mutex> lock(state.mutex);
     state.callback = std::move(cb);
-    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] Log callback registered");
 }
 
 void fib::setLogLevel(LogLevel level) {
     auto& state = getState();
     std::lock_guard<std::mutex> lock(state.mutex);
     state.level = level;
-    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] Log level set to %d", static_cast<int>(level));
 }
 
 fib::LogLevel fib::getLogLevel() {

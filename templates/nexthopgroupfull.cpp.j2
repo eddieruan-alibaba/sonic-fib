@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include "nexthopgroup_debug.h"
 
 using namespace std;
 using namespace fib;
@@ -16,27 +17,24 @@ using namespace fib;
                 const std::vector<uint32_t>& dependents_in)
     : id(id_in), key(key_in), nh_grp_full_list(nh_grp_full_list_in), depends(depends_in), dependents(dependents_in)
 {
-    //SWSS_LOG_DEBUG("{{ root_struct_name }} construction started (multi-nexthop)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction started (multi-nexthop) with id: " << id_in <<
-            ", key: " << key_in << endl;
+
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction started (multi-nexthop) with id: %d, %d %s", id_in, key_in);
     for (size_t i = 0; i < nh_grp_full_list_in.size(); i++) {
-        cout << "[CPP DEBUG] nh_grp_full_list item " << i << ": id=" << nh_grp_full_list_in[i].id 
-             << ", weight=" << static_cast<unsigned int>(nh_grp_full_list_in[i].weight)
-             << ", num_direct=" << nh_grp_full_list_in[i].num_direct << endl;
+        FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] nh_grp_full_list item %d: id= %d weight %d num_direct %d", i, nh_grp_full_list_in[i].id, static_cast<unsigned int>(nh_grp_full_list_in[i].weight), nh_grp_full_list_in[i].num_direct);
     }
     for (size_t i = 0; i < depends_in.size(); i++) {
-        cout << "[CPP DEBUG] depends item " << i << ": " << depends_in[i] << endl;
+        FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] depends item %d : %d ", i, depends_in[i]);
     }
     for (size_t i = 0; i < dependents_in.size(); i++) {
-        cout << "[CPP DEBUG] dependents item " << i << ": " << dependents_in[i] << endl;
+        FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] dependents item %d : %d", i, dependents_in[i]);
     }
 
     memset(&gate, 0, sizeof(gate));
     bh_type = BLACKHOLE_UNSPEC;
     memset(&src, 0, sizeof(src));
     memset(&rmap_src, 0, sizeof(rmap_src));
-    //SWSS_LOG_DEBUG("{{ root_struct_name }} construction finished (multi-nexthop)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction finished (multi-nexthop) for id: " << id_in << endl;
+
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction finished (multi-nexthop) for id: %d", id_in);
 }
 
 /* Constructor for singleton {{ root_struct_name }} */
@@ -55,9 +53,7 @@ using namespace fib;
       ifindex(ifindex_in), nh_label_type(label_type_in), src(src_in), rmap_src(rmap_src_in),
       nh_srv6(nullptr)
 {
-    //SWSS_LOG_DEBUG("{{ root_struct_name }} construction started (singleton)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction started (singleton) for id: " << id_in <<
-            ", key: " << key_in << endl;
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction started (singleton) for id: %d, key: %d", id_in, key_in);
 
     /* Initialize union member */
     this->bh_type = bh_type_in;
@@ -116,8 +112,7 @@ using namespace fib;
             }
         }
     }
-    //SWSS_LOG_DEBUG("{{ root_struct_name }} construction finished (singleton)");
-    cout << "[CPP DEBUG] {{ root_struct_name }} construction finished (singleton) for id: " << id_in << endl;
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction finished (singleton) for id: %d",  id_in);
 }
 
 /* Copy Constructor */
@@ -128,9 +123,7 @@ using namespace fib;
         type(other.type), vrf_id(other.vrf_id), ifindex(other.ifindex),
         nh_label_type(other.nh_label_type), bh_type(other.bh_type)
 {
-    //SWSS_LOG_DEBUG("NextHopGroupFull copy constructor started");
-    cout << "[CPP DEBUG] NextHopGroupFull copy constructor started for id: " << other.id <<
-            ", key: " << other.key << endl;
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] NextHopGroupFull copy constructor started for id: %d, key: %d",  other.id, other.key);
 
     memcpy(&gate, &other.gate, sizeof(g_addr));
     memcpy(&src, &other.src, sizeof(g_addr));
@@ -336,9 +329,7 @@ bool {{ root_struct_name }}::operator!=(const {{ root_struct_name }}& other) con
 /* Destructor of {{ root_struct_name }} */
 {{ root_struct_name }}::~{{ root_struct_name }}()
 {
-    //SWSS_LOG_DEBUG("{{ root_struct_name }} destructor started");
-    cout << "[CPP DEBUG] {{ root_struct_name }} destructor started" << endl;
-    cout << "[CPP DEBUG] {{ root_struct_name }} destructor started for id: " << id << endl;
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} destructor started for id: %d", id);
     if (nh_srv6 != nullptr)
     {
         if (nh_srv6->seg6_segs != nullptr)

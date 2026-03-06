@@ -23,6 +23,7 @@ TEST(NextHopGroupFull, multi_nexthop)
     /* Prepare the parameters */
     uint32_t test_id = 100;
     uint32_t test_key = 1234567;
+    uint32_t test_nhg_flags = 1024;
     vector<nh_grp_full> test_nh_grp_full_list = {
         make_nh_grp_full(200, 1, 0),
         make_nh_grp_full(300, 1, 2),
@@ -35,13 +36,15 @@ TEST(NextHopGroupFull, multi_nexthop)
 
     /* Call constructor function */
     cout << "[DEBUG] Calling NextHopGroupFull Constructor ..." << endl;
-    NextHopGroupFull nhg(test_id, test_key, test_nh_grp_full_list, test_depends, test_dependents);
+    NextHopGroupFull nhg(test_id, test_key, test_nhg_flags,
+                       test_nh_grp_full_list, test_depends, test_dependents);
 
     /* Check the value of the constructed NextHopGroupFull */
     cout << "[DEBUG] Checking constructed values ..." << endl;
     // Check plain values
     EXPECT_EQ(nhg.id, test_id);
     EXPECT_EQ(nhg.key, test_key);
+    EXPECT_EQ(nhg.nhg_flags, test_nhg_flags);
     // Check nh_grp_full_list status
     EXPECT_EQ(nhg.nh_grp_full_list.size(), test_nh_grp_full_list.size());
     for (size_t i = 0; i < test_nh_grp_full_list.size(); i++) {
@@ -89,6 +92,7 @@ TEST(NextHopGroupFull, multi_nexthop)
     // Check plain values
     EXPECT_EQ(assigned_nhg.id, nhg.id);
     EXPECT_EQ(assigned_nhg.key, nhg.key);
+    EXPECT_EQ(assigned_nhg.nhg_flags, nhg.nhg_flags);
     // Check nh_grp_full_list status
     EXPECT_EQ(assigned_nhg.nh_grp_full_list.size(), nhg.nh_grp_full_list.size());
     for (size_t i = 0; i < nhg.nh_grp_full_list.size(); i++) {
@@ -132,6 +136,7 @@ TEST(NextHopGroupFull, multi_nexthop)
     // Check plain values
     EXPECT_EQ(copy_nhg.id, nhg.id);
     EXPECT_EQ(copy_nhg.key, nhg.key);
+    EXPECT_EQ(copy_nhg.nhg_flags, nhg.nhg_flags);
     // Check nh_grp_full_list status
     EXPECT_EQ(copy_nhg.nh_grp_full_list.size(), nhg.nh_grp_full_list.size());
     for (size_t i = 0; i < nhg.nh_grp_full_list.size(); i++) {
@@ -214,6 +219,7 @@ TEST(NextHopGroupFull, singleton)
 
     uint8_t test_weight = 8;
     uint8_t test_flags = 8;
+    uint32_t test_nhg_flags = 1024;
     bool test_has_srv6 = true;
     bool test_has_seg6_segs = true;
 
@@ -261,7 +267,7 @@ TEST(NextHopGroupFull, singleton)
     NextHopGroupFull nhg(test_id, test_key, test_type, test_vrf_id, test_ifindex,
                 test_ifname, test_depends, test_dependents, test_nh_label_type,
                 test_bh_type, test_gateway, test_src, test_rmap_src,
-                test_weight, test_flags, test_has_srv6, test_has_seg6_segs,
+                test_weight, test_flags, test_nhg_flags, test_has_srv6, test_has_seg6_segs,
                 &test_nh_srv6, test_nh_seg6_segs, test_nh_segs);
 
     /* Check the value of the constructed NextHopGroupFull */
@@ -284,6 +290,7 @@ TEST(NextHopGroupFull, singleton)
     EXPECT_EQ(nhg.nh_label_type, test_nh_label_type);
     EXPECT_EQ(nhg.weight, test_weight);
     EXPECT_EQ(nhg.flags, test_flags);
+    EXPECT_EQ(nhg.nhg_flags, test_nhg_flags);
 
     // Check address values
     EXPECT_TRUE(memcmp(&nhg.gate, &test_gateway, sizeof(g_addr)) == 0);
@@ -347,6 +354,7 @@ TEST(NextHopGroupFull, singleton)
     EXPECT_EQ(assigned_nhg.ifname, nhg.ifname);
     EXPECT_EQ(assigned_nhg.nh_label_type, nhg.nh_label_type);
     EXPECT_EQ(assigned_nhg.flags, nhg.flags);
+    EXPECT_EQ(assigned_nhg.nhg_flags, nhg.nhg_flags);
 
     // Check address values
     EXPECT_TRUE(memcmp(&assigned_nhg.gate, &nhg.gate, sizeof(g_addr)) == 0);
@@ -409,6 +417,7 @@ TEST(NextHopGroupFull, singleton)
     EXPECT_EQ(copy_nhg.ifname, nhg.ifname);
     EXPECT_EQ(copy_nhg.nh_label_type, nhg.nh_label_type);
     EXPECT_EQ(copy_nhg.flags, nhg.flags);
+    EXPECT_EQ(copy_nhg.nhg_flags, nhg.nhg_flags);
 
     // Check address values
     EXPECT_TRUE(memcmp(&copy_nhg.gate, &nhg.gate, sizeof(g_addr)) == 0);

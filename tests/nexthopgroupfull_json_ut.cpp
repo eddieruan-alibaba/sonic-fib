@@ -491,6 +491,7 @@ TEST(StructToFromJson, NextHopGroupFull_multi_nexthop)
     cout << "[DEBUG] Preparing values ..." << endl;
     uint32_t test_id = 100;
     uint32_t test_key = 1234567;
+    uint32_t test_nhg_flags = 1024;
     vector<nh_grp_full> test_nh_grp_full_list = {
         make_nh_grp_full(200, 1, 0),
         make_nh_grp_full(300, 1, 2),
@@ -503,7 +504,8 @@ TEST(StructToFromJson, NextHopGroupFull_multi_nexthop)
 
     /* Call constructor function */
     cout << "[DEBUG] Calling NextHopGroupFull Constructor ..." << endl;
-    NextHopGroupFull test_val(test_id, test_key, test_nh_grp_full_list, test_depends, test_dependents);
+    NextHopGroupFull test_val(test_id, test_key, test_nhg_flags,
+                           test_nh_grp_full_list, test_depends, test_dependents);
 
     /* Call to_json function */
     cout << "[DEBUG] Calling to_json for NextHopGroupFull in multi-nexthop case ..." << endl;
@@ -516,6 +518,7 @@ TEST(StructToFromJson, NextHopGroupFull_multi_nexthop)
     /* Check the values of constructed JSON */
     EXPECT_EQ(j["id"], 100);
     EXPECT_EQ(j["key"], 1234567);
+    EXPECT_EQ(j["nhg_flags"], 1024);
     for (size_t i = 0; i < test_val.nh_grp_full_list.size(); i++) {
         EXPECT_EQ(j["nh_grp_full_list"][i]["id"], test_val.nh_grp_full_list[i].id);
         EXPECT_EQ(j["nh_grp_full_list"][i]["weight"], test_val.nh_grp_full_list[i].weight);
@@ -564,6 +567,7 @@ TEST(StructToFromJson, NextHopGroupFull_singleton)
 
     uint8_t test_weight = 8;
     uint8_t test_flags = 8;
+    uint32_t test_nhg_flags = 1024;
     bool test_has_srv6 = true;
     bool test_has_seg6_segs = true;
 
@@ -614,7 +618,7 @@ TEST(StructToFromJson, NextHopGroupFull_singleton)
     NextHopGroupFull test_val(test_id, test_key, test_type, test_vrf_id, test_ifindex,
                 test_ifname, test_depends, test_dependents, test_nh_label_type,
                 test_bh_type, test_gateway, test_src, test_rmap_src,
-                test_weight, test_flags, test_has_srv6, test_has_seg6_segs,
+                test_weight, test_flags, test_nhg_flags, test_has_srv6, test_has_seg6_segs,
                 &test_nh_srv6, test_nh_seg6_segs, test_nh_segs);
 
     // Free the memory allocated dynamically
@@ -645,6 +649,7 @@ TEST(StructToFromJson, NextHopGroupFull_singleton)
     EXPECT_EQ(j["nh_label_type"], "ZEBRA_LSP_NONE");
     EXPECT_EQ(j["weight"], test_val.weight);
     EXPECT_EQ(j["flags"], test_val.flags);
+    EXPECT_EQ(j["nhg_flags"], test_val.nhg_flags);
     EXPECT_EQ(j["gate"], "2001:db8::1");
     EXPECT_EQ(j["src"], "2001:db8::2");
     EXPECT_EQ(j["rmap_src"], "2001:db8::3");

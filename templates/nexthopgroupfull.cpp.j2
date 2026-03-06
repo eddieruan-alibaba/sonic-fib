@@ -11,14 +11,14 @@ using namespace std;
 using namespace fib;
 
 /* Constructor for multi-path {{ root_struct_name }} */
-{{ root_struct_name }}::{{ root_struct_name }}(std::uint32_t id_in, std::uint32_t key_in,
+{{ root_struct_name }}::{{ root_struct_name }}(std::uint32_t id_in, std::uint32_t key_in, std::uint32_t nhg_flags_in,
                 const std::vector<nh_grp_full>& nh_grp_full_list_in,
                 const std::vector<uint32_t>& depends_in,
                 const std::vector<uint32_t>& dependents_in)
-    : id(id_in), key(key_in), nh_grp_full_list(nh_grp_full_list_in), depends(depends_in), dependents(dependents_in)
+    : id(id_in), key(key_in), nhg_flags(nhg_flags_in), nh_grp_full_list(nh_grp_full_list_in), depends(depends_in), dependents(dependents_in)
 {
 
-    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction started (multi-nexthop) with id: %d, %d %s", id_in, key_in);
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction started (multi-nexthop) with id: %d, key: %d, nhg_flags: %d", id_in, key_in, nhg_flags_in);
     for (size_t i = 0; i < nh_grp_full_list_in.size(); i++) {
         FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] nh_grp_full_list item %d: id= %d weight %d num_direct %d", i, nh_grp_full_list_in[i].id, static_cast<unsigned int>(nh_grp_full_list_in[i].weight), nh_grp_full_list_in[i].num_direct);
     }
@@ -44,16 +44,17 @@ using namespace fib;
                 const std::vector<uint32_t>& dependents_in,
                 enum lsp_types_t label_type_in, enum blackhole_type bh_type_in,
                 union g_addr gateway_in, union g_addr src_in, union g_addr rmap_src_in,
-                std::uint8_t weight_in, std::uint8_t flags_in, bool has_srv6, bool has_seg6_segs,
+                std::uint8_t weight_in, std::uint8_t flags_in, std::uint32_t nhg_flags_in,
+                bool has_srv6, bool has_seg6_segs,
                 const struct nexthop_srv6* nh_srv6_in,
                 const struct seg6_seg_stack* nh_seg6_segs_in,
                 const std::vector<struct in6_addr>& nh_segs_in)
-    : id(id_in), key(key_in), weight(weight_in), flags(flags_in), ifname(ifname_in),
+    : id(id_in), key(key_in), weight(weight_in), flags(flags_in), nhg_flags(nhg_flags_in), ifname(ifname_in),
       depends(depends_in), dependents(dependents_in), type(type_in), vrf_id(vrf_id_in),
       ifindex(ifindex_in), nh_label_type(label_type_in), src(src_in), rmap_src(rmap_src_in),
       nh_srv6(nullptr)
 {
-    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction started (singleton) for id: %d, key: %d", id_in, key_in);
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction started (singleton) for id: %d, key: %d, nhg_flags: %d", id_in, key_in, nhg_flags_in);
 
     /* Initialize union member */
     this->bh_type = bh_type_in;
@@ -117,13 +118,13 @@ using namespace fib;
 
 /* Copy Constructor */
 {{ root_struct_name }}::{{ root_struct_name }}(const NextHopGroupFull& other)
-      : id(other.id), key(other.key), weight(other.weight), flags(other.flags),
+      : id(other.id), key(other.key), weight(other.weight), flags(other.flags), nhg_flags(other.nhg_flags),
         ifname(other.ifname), nh_grp_full_list(other.nh_grp_full_list),
         depends(other.depends), dependents(other.dependents),
         type(other.type), vrf_id(other.vrf_id), ifindex(other.ifindex),
         nh_label_type(other.nh_label_type), bh_type(other.bh_type)
 {
-    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] NextHopGroupFull copy constructor started for id: %d, key: %d",  other.id, other.key);
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] NextHopGroupFull copy constructor started for id: %d, key: %d, nhg_flags: %d",  other.id, other.key, other.nhg_flags);
 
     memcpy(&gate, &other.gate, sizeof(g_addr));
     memcpy(&src, &other.src, sizeof(g_addr));
@@ -170,7 +171,7 @@ using namespace fib;
 {{ root_struct_name }}& {{ root_struct_name }}::operator = (const NextHopGroupFull &other)
 {
     cout << "[CPP DEBUG] NextHopGroupFull copy assignment operator started for id: " << other.id <<
-            ", key: " << other.key << endl;
+            ", key: " << other.key << ", nhg_flags: " << other.nhg_flags << endl;
 
     if (this == &other)     return *this;
 
@@ -178,6 +179,7 @@ using namespace fib;
     key = other.key;
     weight = other.weight;
     flags = other.flags;
+    nhg_flags = other.nhg_flags;
 
     ifname = other.ifname;
 
@@ -234,6 +236,7 @@ bool {{ root_struct_name }}::operator==(const {{ root_struct_name }}& other) con
         key != other.key ||
         weight != other.weight ||
         flags != other.flags ||
+        nhg_flags != other.nhg_flags ||
         ifname != other.ifname ||
         depends != other.depends ||
         dependents != other.dependents ||

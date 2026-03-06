@@ -29,6 +29,7 @@ TEST(NextHopGroupFull_CAPI, multi_nexthop) {
 
     c_nhg.id = 100;
     c_nhg.key = 1234567;
+    c_nhg.nhg_flags = 1024;
 
     // set up nh_grp_full_list
     struct C_nh_grp_full nh1 = {};
@@ -96,6 +97,7 @@ TEST(NextHopGroupFull_CAPI, multi_nexthop) {
     // verify basic fields
     EXPECT_EQ(cpp_nhg.id, c_nhg.id);
     EXPECT_EQ(cpp_nhg.key, c_nhg.key);
+    EXPECT_EQ(cpp_nhg.nhg_flags, c_nhg.nhg_flags);
     // verify nh_grp_full_list
     EXPECT_EQ(cpp_nhg.nh_grp_full_list.size(), 5);
     for (int i = 0; i < 5; i++) {
@@ -136,6 +138,7 @@ TEST(NextHopGroupFull_CAPI, singleton) {
     c_nhg.bh_type = C_BLACKHOLE_NULL;
     c_nhg.weight = 8;
     c_nhg.flags = 8;
+    c_nhg.nhg_flags = 1024;
 
     // set up addresses
     inet_pton(AF_INET6, "2001:db8::1", &c_nhg.gate.ipv6.s6_addr);
@@ -223,6 +226,7 @@ TEST(NextHopGroupFull_CAPI, singleton) {
     EXPECT_EQ(cpp_nhg.ifindex, c_nhg.ifindex);
     EXPECT_EQ(cpp_nhg.weight, c_nhg.weight);
     EXPECT_EQ(cpp_nhg.flags, c_nhg.flags);
+    EXPECT_EQ(cpp_nhg.nhg_flags, c_nhg.nhg_flags);
     EXPECT_EQ(cpp_nhg.nh_label_type, c_nhg.nh_label_type);
     EXPECT_EQ(cpp_nhg.bh_type, c_nhg.bh_type);
 

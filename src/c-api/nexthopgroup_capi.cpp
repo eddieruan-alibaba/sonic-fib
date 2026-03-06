@@ -67,9 +67,8 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
         }
 
         /* Call NextHopGroupFull constructor(multi) to create NextHopGroupFull object */
-        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key,
-                                                                cpp_nh_grp_full_list,
-                                                                cpp_depends, cpp_dependents);
+        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags,
+                                                   cpp_nh_grp_full_list, cpp_depends, cpp_dependents);
 
         cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_multi::Converting C Obj to C++ Obj finished." << endl;
 
@@ -142,8 +141,8 @@ char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull
                                                          cpp_ifname, cpp_depends, cpp_dependents,
                                                          static_cast<fib::lsp_types_t>(c_nhg->nh_label_type),
                                                          static_cast<fib::blackhole_type>(c_nhg->bh_type),
-                                                         cpp_gate,
-                                                         cpp_src, cpp_rmap_src,c_nhg->weight, c_nhg->flags,
+                                                         cpp_gate, cpp_src, cpp_rmap_src,c_nhg->weight,
+                                                         c_nhg->flags, c_nhg->nhg_flags,
                                                          c_nhg->nh_srv6 != nullptr,
                                                          c_nhg->nh_srv6 && c_nhg->nh_srv6->seg6_segs != nullptr,
                                                          reinterpret_cast<const fib::nexthop_srv6*>(c_nhg->nh_srv6),

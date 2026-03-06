@@ -35,6 +35,13 @@
       "default_value" : "0",
       "description": "Bit flags (e.g., NEXTHOP_FLAG_ONLINK = 8)"
     },
+    "nhg_flags": {
+      "type": "integer",
+      "position" : 1,
+      "minimum": 0,
+      "default_value" : "0",
+      "description": "Bit flags for NHG (e.g., NEXTHOP_GROUP_RECEIVED = 1024)"
+    },
     "ifname": {
       "type": "string",
       "position" : 2,

@@ -135,6 +135,7 @@ using namespace fib;
         // copy plain attributes
         nh_srv6->seg6local_action = other.nh_srv6->seg6local_action;
         nh_srv6->seg6local_ctx = other.nh_srv6->seg6local_ctx;
+        nh_srv6->seg6_src = other.nh_srv6->seg6_src;
 
         // Deep copy "seg6_segs" structure
         if (other.nh_srv6->seg6_segs != nullptr) {
@@ -142,7 +143,7 @@ using namespace fib;
                             + other.nh_srv6->seg6_segs->num_segs * sizeof(in6_addr);
             nh_srv6->seg6_segs = static_cast<seg6_seg_stack*>(malloc(size));
             if (!nh_srv6->seg6_segs) {
-                FIB_LOG(fib::LogLevel::ERROR, Failed to allocate seg6_segs in copy constructor");
+                FIB_LOG(fib::LogLevel::ERROR, "Failed to allocate seg6_segs in copy constructor");
                 free(nh_srv6);  // free the allocated nh_srv6 earlier
                 nh_srv6 = nullptr;
                 return;
@@ -196,6 +197,7 @@ using namespace fib;
 
         nh_srv6->seg6local_action = other.nh_srv6->seg6local_action;
         nh_srv6->seg6local_ctx = other.nh_srv6->seg6local_ctx;
+        nh_srv6->seg6_src = other.nh_srv6->seg6_src;
 
         /* Deep copy the flexible array in seg6_segs */
         if (other.nh_srv6->seg6_segs != nullptr) {
@@ -283,6 +285,13 @@ bool {{ root_struct_name }}::operator==(const {{ root_struct_name }}& other) con
             FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] NOT SAME nh_srv6->seg6local_ctx!");
             return false;
         }
+
+        if (memcmp(&nh_srv6->seg6_src, &other.nh_srv6->seg6_src,
+                    sizeof(struct in6_addr)) != 0) {
+            FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] NOT SAME nh_srv6->seg6_src!");
+            return false;
+        }
+
         // Compare seg6_segs
         if ((nh_srv6->seg6_segs == nullptr) != (other.nh_srv6->seg6_segs == nullptr)) {
             FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] NOT SAME nh_srv6->seg6_segs pointer state!");

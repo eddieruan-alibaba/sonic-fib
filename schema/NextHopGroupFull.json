@@ -256,6 +256,7 @@
       "properties": {
         "seg6local_action": { "$ref": "#/$defs/seg6local_action_t" },
         "seg6local_ctx": { "$ref": "#/$defs/seg6local_context" },
+        "seg6_src": { "$ref": "#/$defs/in6_address" },
         "seg6_segs": {
           "anyOf": [
             { "type": "null" },
@@ -263,7 +264,7 @@
           ]
         }
       },
-      "required": ["seg6local_action", "seg6local_ctx", "seg6_segs"],
+      "required": ["seg6local_action", "seg6local_ctx", "seg6_src", "seg6_segs"],
       "additionalProperties": false
     }
   }

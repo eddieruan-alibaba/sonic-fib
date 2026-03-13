@@ -53,6 +53,7 @@ struct {{ name }} {
 struct C_nexthop_srv6 {
     enum C_seg6local_action_t seg6local_action;
     struct C_seg6local_context seg6local_ctx;
+    struct in6_addr seg6_src;
     struct C_seg6_seg_stack *seg6_segs;
 };
 

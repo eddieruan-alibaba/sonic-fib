@@ -36,6 +36,7 @@ namespace fib {
     struct nexthop_srv6 {
         enum seg6local_action_t seg6local_action = {};
         struct seg6local_context seg6local_ctx = {};
+        struct in6_addr seg6_src = {};
         struct seg6_seg_stack *seg6_segs = nullptr;
     };
 

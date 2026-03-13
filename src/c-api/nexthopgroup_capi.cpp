@@ -27,15 +27,13 @@ char* nexthopgroup_to_json(NextHopGroupFull* obj);
 char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths)
 {
     if (!c_nhg) {
-        cout << "[CPP DEBUG] Do NOT pass in an empty C_NextHopGroupFull *" << endl;
+        FIB_LOG(fib::LogLevel::ERROR, "Do NOT pass in an empty C_NextHopGroupFull *");
         return nullptr;
     }
 
     try {
-        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_multi::Converting C_NextHopGroupFull to NextHopGroupFull started ..." << endl;
-
+        FIB_LOG(fib::LogLevel::DEBUG, "multipaths %d", multipaths);
         /* Convert C array to C++ vector */
-        cout << "[CPP DEBUG] Converting C nh_grp_full[] to C++ vector ..." << endl;
         vector<fib::nh_grp_full> cpp_nh_grp_full_list;
         for (int i = 0; i < (MULTIPATH_NUM * MAX_NHG_RECURSION) + 1; i++) {
             if (c_nhg->nh_grp_full_list[i].id == 0) {
@@ -49,7 +47,6 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
             };
             cpp_nh_grp_full_list.push_back(cpp_nh);
         }
-        cout << "[CPP DEBUG] Converting C depends[] to C++ vector ..." << endl;
         vector<uint32_t> cpp_depends;
         for (int i = 0; i < MULTIPATH_NUM + 1; i++) {
             if (c_nhg->depends[i] == 0) {
@@ -57,7 +54,6 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
             }
             cpp_depends.push_back(c_nhg->depends[i]);
         }
-        cout << "[CPP DEBUG] Converting C dependents[] to C++ vector ..." << endl;
         vector<uint32_t> cpp_dependents;
         for (int i = 0; i < MULTIPATH_NUM + 1; i++) {
             if (c_nhg->dependents[i] == 0) {
@@ -70,19 +66,16 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
         NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags,
                                                    cpp_nh_grp_full_list, cpp_depends, cpp_dependents);
 
-        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_multi::Converting C Obj to C++ Obj finished." << endl;
-
         /* Convert C++ Obj to JSON stirng */
-        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_multi::Converting C++ Obj to JSON string started ..." << endl;
         char* json_str = nexthopgroup_to_json(cpp_nhg);
-        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_multi::Converting C++ Obj to JSON string finished." << endl;
+        FIB_LOG(fib::LogLevel::DEBUG, "json_str length %zu, str: %s", 
+            json_str ? strlen(json_str) : 0, json_str ? json_str : "null");
 
         nexthopgroup_free(cpp_nhg);
-
         return json_str;
 
     } catch (...) {
-        cout << "[CPP ERROR] nexthopgroupfull_json_from_c_nhg_multi::Converting failed" << endl;
+        FIB_LOG(fib::LogLevel::ERROR, "nexthopgroupfull_json_from_c_nhg_multi::Converting failed");
         return nullptr;
     }
 }
@@ -90,15 +83,12 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
 char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths)
 {
     if (!c_nhg) {
-        cout << "[CPP DEBUG] Do NOT pass in an empty C_NextHopGroupFull *" << endl;
+        FIB_LOG(fib::LogLevel::ERROR, "Do NOT pass in an empty C_NextHopGroupFull *");
         return nullptr;
     }
 
     try {
-        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_singleton::Converting C_NextHopGroupFull to NextHopGroupFull started:" << endl;
-
         /* Convert C array to C++ vector */
-        cout << "[CPP DEBUG] Converting C depends[] to C++ vector ..." << endl;
         vector<uint32_t> cpp_depends;
         for (int i = 0; i < MULTIPATH_NUM + 1; i++) {
             if (c_nhg->depends[i] == 0) {
@@ -106,7 +96,6 @@ char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull
             }
             cpp_depends.push_back(c_nhg->depends[i]);
         }
-        cout << "[CPP DEBUG] Converting C dependents[] to C++ vector ..." << endl;
         vector<uint32_t> cpp_dependents;
         for (int i = 0; i < MULTIPATH_NUM + 1; i++) {
             if (c_nhg->dependents[i] == 0) {
@@ -119,7 +108,6 @@ char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull
         std::string cpp_ifname = "";
 
         /* Convert seg6_segs flexible array to C++ vector */
-        cout << "[CPP DEBUG] Converting seg6_segs flexible array to C++ vector ..." << endl;
         vector<struct in6_addr> cpp_nh_segs;
         if (c_nhg->nh_srv6 && c_nhg->nh_srv6->seg6_segs) {
             for (uint8_t i = 0; i < c_nhg->nh_srv6->seg6_segs->num_segs; i++) {
@@ -149,19 +137,17 @@ char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull
                                                          reinterpret_cast<const fib::seg6_seg_stack*>(c_nhg->nh_srv6 ? c_nhg->nh_srv6->seg6_segs : nullptr),
                                                          cpp_nh_segs);
 
-        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_singleton::Converting C Obj to C++ Obj finished." << endl;
-
         /* Convert C++ Obj to JSON string */
-        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_singleton::Converting C++ Obj to JSON string started ..." << endl;
-        char* json_str = nexthopgroup_to_json(cpp_nhg); 
-        cout << "[CPP DEBUG] nexthopgroupfull_json_from_c_nhg_singleton::Converting C++ Obj to JSON string finished." << endl;
+        char* json_str = nexthopgroup_to_json(cpp_nhg);
+        FIB_LOG(fib::LogLevel::DEBUG, "json_str length %zu, str: %s",
+            json_str ? strlen(json_str) : 0, json_str ? json_str : "null");
 
         nexthopgroup_free(cpp_nhg);
 
         return json_str;
 
     } catch (...) {
-        cout << "[CPP ERROR] nexthopgroupfull_json_from_c_nhg_singleton::Converting failed" << endl;
+        FIB_LOG(fib::LogLevel::ERROR, "nexthopgroupfull_json_from_c_nhg_singleton::Converting failed");
         return nullptr;
     }
 }

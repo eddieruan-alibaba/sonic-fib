@@ -140,6 +140,7 @@ inline void to_json(nlohmann::ordered_json& j, const nexthop_srv6* srv6) {
     j = nlohmann::ordered_json{
         {"seg6local_action", srv6->seg6local_action},
         {"seg6local_ctx", srv6->seg6local_ctx},
+        {"seg6_src", ipv6_to_string(srv6->seg6_src)},
         {"seg6_segs", srv6->seg6_segs}
     };
 }
@@ -152,6 +153,8 @@ inline void from_json(const nlohmann::ordered_json& j, nexthop_srv6*& srv6) {
     j.at("seg6local_action").get_to(srv6->seg6local_action);
     j.at("seg6local_ctx").get_to(srv6->seg6local_ctx);
     j.at("seg6_segs").get_to(srv6->seg6_segs);
+    std::string nh6_str = j.at("seg6_src");
+    string_to_ipv6(nh6_str, srv6->seg6_src);
 }
 
 // --- {{root_struct_name}} ---

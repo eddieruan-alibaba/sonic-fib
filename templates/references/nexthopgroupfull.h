@@ -96,6 +96,7 @@ namespace fib {
     struct nexthop_srv6 {
         enum seg6local_action_t seg6local_action = {};
         struct seg6local_context seg6local_ctx = {};
+        struct in6_addr seg6_src = {};
         struct seg6_seg_stack *seg6_segs = nullptr;
     };
 
@@ -112,6 +113,7 @@ namespace fib {
         std::uint32_t key  = 0;
         std::uint8_t weight  = 0;
         std::uint8_t flags  = 0;
+        std::uint32_t nhg_flags  = 0;
 
     #define NEXTHOP_FLAG_ONLINK (1 << 3)
         std::string ifname  = "";
@@ -137,7 +139,7 @@ namespace fib {
         NextHopGroupFull() = default;
 
         // Constructors
-        NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in,
+        NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in, std::uint32_t nhg_flags_in,
                          const std::vector<nh_grp_full>& nh_grp_full_list_in,
                          const std::vector<uint32_t>& depends_in,
                          const std::vector<uint32_t>& dependents_in);
@@ -148,7 +150,8 @@ namespace fib {
                          const std::vector<uint32_t>& dependents_in,
                          enum lsp_types_t label_type_in, enum blackhole_type bh_type_in,
                          union g_addr gateway_in, union g_addr src_in, union g_addr rmap_src_in,
-                         std::uint8_t weight_in, std::uint8_t flags_in, bool has_srv6, bool has_seg6_segs,
+                         std::uint8_t weight_in, std::uint8_t flags_in, std::uint32_t nhg_flags_in,
+                         bool has_srv6, bool has_seg6_segs,
                          const struct nexthop_srv6* nh_srv6_in,
                          const struct seg6_seg_stack* nh_seg6_segs_in,
                          const std::vector<struct in6_addr>& nh_segs_in);

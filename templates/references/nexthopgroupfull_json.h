@@ -288,6 +288,7 @@ inline void to_json(nlohmann::ordered_json& j, const nexthop_srv6* srv6) {
     j = nlohmann::ordered_json{
         {"seg6local_action", srv6->seg6local_action},
         {"seg6local_ctx", srv6->seg6local_ctx},
+        {"seg6_src", ipv6_to_string(srv6->seg6_src)},
         {"seg6_segs", srv6->seg6_segs}
     };
 }
@@ -300,6 +301,8 @@ inline void from_json(const nlohmann::ordered_json& j, nexthop_srv6*& srv6) {
     j.at("seg6local_action").get_to(srv6->seg6local_action);
     j.at("seg6local_ctx").get_to(srv6->seg6local_ctx);
     j.at("seg6_segs").get_to(srv6->seg6_segs);
+    std::string nh6_str = j.at("seg6_src");
+    string_to_ipv6(nh6_str, srv6->seg6_src);
 }
 
 // --- NextHopGroupFull ---
@@ -309,6 +312,7 @@ inline void to_json(nlohmann::ordered_json& j, const NextHopGroupFull& nh) {
         {"key", nh.key},
         {"weight", nh.weight},
         {"flags", nh.flags},
+        {"nhg_flags", nh.nhg_flags},
         {"ifname", nh.ifname},
         {"nh_grp_full_list", nh.nh_grp_full_list},
         {"depends", nh.depends},
@@ -339,6 +343,7 @@ inline void from_json(const nlohmann::ordered_json& j, NextHopGroupFull& nh) {
     j.at("key").get_to(nh.key);
     j.at("weight").get_to(nh.weight);
     j.at("flags").get_to(nh.flags);
+    j.at("nhg_flags").get_to(nh.nhg_flags);
     j.at("ifname").get_to(nh.ifname);
     j.at("nh_grp_full_list").get_to(nh.nh_grp_full_list);
     j.at("depends").get_to(nh.depends);

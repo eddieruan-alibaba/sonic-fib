@@ -64,10 +64,10 @@ extern "C" {
 static int fib_level_to_syslog(int level)
 {
     switch (level) {
-    case 0: return LOG_DEBUG;    // DEBUG
-    case 1: return LOG_INFO;     // INFO
-    case 2: return LOG_WARNING;  // WARN
-    case 3: return LOG_ERR;      // ERROR
+    case static_cast<int>(fib::LogLevel::DEBUG): return LOG_DEBUG;
+    case static_cast<int>(fib::LogLevel::INFO):  return LOG_INFO;
+    case static_cast<int>(fib::LogLevel::WARN):  return LOG_WARNING;
+    case static_cast<int>(fib::LogLevel::ERROR): return LOG_ERR;
     default: return LOG_DEBUG;
     }
 }
@@ -98,7 +98,7 @@ static void frr_log_forwarder(int level,
 } // extern "C"
 // Test C API registration and logging
 TEST(NextHopGroupDEBUG_CAPI, register_c) { 
-    fib_frr_set_log_level(0); // Set back to DEBUG
+    fib_frr_set_log_level(static_cast<int>(fib::LogLevel::DEBUG)); // Set back to DEBUG
     LogLevel level = getLogLevel();
     FIB_LOG(fib::LogLevel::DEBUG, "Current log level: %d", static_cast<int>(level));
     ASSERT_EQ(getLogLevel(), fib::LogLevel::DEBUG); // Default is  DEBUG
@@ -106,7 +106,7 @@ TEST(NextHopGroupDEBUG_CAPI, register_c) {
     FIB_LOG(fib::LogLevel::DEBUG, "Test log with default logger - DEBUG level");
     FIB_LOG(fib::LogLevel::INFO, "Test log with default logger - INFO level");
 
-    fib_frr_set_log_level(1); // INFO
+    fib_frr_set_log_level(static_cast<int>(fib::LogLevel::INFO)); // INFO
     level = getLogLevel();
     FIB_LOG(fib::LogLevel::INFO, "Current log level after setting: %d", static_cast<int>(level));
     ASSERT_EQ(getLogLevel(), fib::LogLevel::INFO); // Change to INFO

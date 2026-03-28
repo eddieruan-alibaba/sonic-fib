@@ -209,8 +209,9 @@ void fib_frr_register_callback(fib_frr_log_fn cb) {
 }
 
 void fib_frr_set_log_level(int level) {
-    // Map (0-3) to fib::LogLevel
-    if (level >= 0 && level <= 3) {
+    // Map int to fib::LogLevel
+    if (level >= static_cast<int>(fib::LogLevel::DEBUG) &&
+        level <= static_cast<int>(fib::LogLevel::ERROR)) {
         fib::setLogLevel(static_cast<fib::LogLevel>(level));
     }
 }

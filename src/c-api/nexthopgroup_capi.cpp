@@ -76,7 +76,7 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
             hex_buf[pos - 1] = '\0'; // Remove trailing space
         }
 
-        FIB_LOG(fib::LogLevel::ERROR,"cpp_gate memory dump (%zu bytes): %s", len, hex_buf);
+        FIB_LOG(fib::LogLevel::ERROR,"DEBUGME: in sonic fib, cpp_gate memory dump (%zu bytes): %s", len, hex_buf);
 
         /* Call NextHopGroupFull constructor(multi) to create NextHopGroupFull object */
         NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, cpp_gate,

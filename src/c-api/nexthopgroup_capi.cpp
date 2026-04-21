@@ -63,12 +63,12 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
         }
 
         /* Call NextHopGroupFull constructor(multi) to create NextHopGroupFull object */
-        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags,
+        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, c_nhg->gate,
                                                    cpp_nh_grp_full_list, cpp_depends, cpp_dependents);
 
         /* Convert C++ Obj to JSON stirng */
         char* json_str = nexthopgroup_to_json(cpp_nhg);
-        FIB_LOG(fib::LogLevel::DEBUG, "json_str length %zu, str: %s", 
+        FIB_LOG(fib::LogLevel::DEBUG, "json_str length %zu, str: %s",
             json_str ? strlen(json_str) : 0, json_str ? json_str : "null");
 
         nexthopgroup_free(cpp_nhg);

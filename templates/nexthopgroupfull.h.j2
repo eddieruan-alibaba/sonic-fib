@@ -91,6 +91,11 @@ namespace fib {
         NextHopGroupFull() = default;
 
         // Constructors
+        NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in, std::uint32_t nhg_flags_in, union g_addr gateway_in,
+                         const std::vector<nh_grp_full>& nh_grp_full_list_in,
+                         const std::vector<uint32_t>& depends_in,
+                         const std::vector<uint32_t>& dependents_in);
+
         NextHopGroupFull(std::uint32_t id_in, std::uint32_t key_in, std::uint32_t nhg_flags_in,
                          const std::vector<nh_grp_full>& nh_grp_full_list_in,
                          const std::vector<uint32_t>& depends_in,

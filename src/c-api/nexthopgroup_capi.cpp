@@ -61,9 +61,9 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
             }
             cpp_dependents.push_back(c_nhg->dependents[i]);
         }
-
+        fib::g_addr cpp_gate = reinterpret_cast<const fib::g_addr&>(c_nhg->gate);
         /* Call NextHopGroupFull constructor(multi) to create NextHopGroupFull object */
-        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, c_nhg->gate,
+        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, cpp_gate,
                                                    cpp_nh_grp_full_list, cpp_depends, cpp_dependents);
 
         /* Convert C++ Obj to JSON stirng */

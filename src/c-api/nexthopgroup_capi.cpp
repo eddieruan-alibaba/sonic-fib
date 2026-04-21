@@ -62,6 +62,22 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
             cpp_dependents.push_back(c_nhg->dependents[i]);
         }
         fib::g_addr cpp_gate = reinterpret_cast<const fib::g_addr&>(c_nhg->gate);
+
+        constexpr size_t len = sizeof(cpp_gate);
+        char hex_buf[len * 3 + 1];
+        const uint8_t* ptr = reinterpret_cast<const uint8_t*>(&cpp_gate);
+        size_t pos = 0;
+
+        for (size_t i = 0; i < len; ++i) {
+            pos += std::snprintf(hex_buf + pos, sizeof(hex_buf) - pos, "%02x ", ptr[i]);
+        }
+
+        if (pos > 0) {
+            hex_buf[pos - 1] = '\0'; // Remove trailing space
+        }
+
+        FIB_LOG(fib::LogLevel::ERROR,"cpp_gate memory dump (%zu bytes): %s", len, hex_buf);
+
         /* Call NextHopGroupFull constructor(multi) to create NextHopGroupFull object */
         NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, cpp_gate,
                                                    cpp_nh_grp_full_list, cpp_depends, cpp_dependents);

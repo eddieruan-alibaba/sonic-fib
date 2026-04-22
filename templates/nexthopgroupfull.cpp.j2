@@ -10,12 +10,13 @@
 using namespace std;
 using namespace fib;
 
-/* Constructor for multi-path {{ root_struct_name }} */
-{{ root_struct_name }}::{{ root_struct_name }}(std::uint32_t id_in, std::uint32_t key_in, std::uint32_t nhg_flags_in, union g_addr gateway_in,
+/* Constructor for recursive NH {{ root_struct_name }} */
+{{ root_struct_name }}::{{ root_struct_name }}(std::uint32_t id_in, std::uint32_t key_in, std::uint32_t nhg_flags_in,
+                union g_addr gateway_in, enum nexthop_types_t type_in,
                 const std::vector<nh_grp_full>& nh_grp_full_list_in,
                 const std::vector<uint32_t>& depends_in,
                 const std::vector<uint32_t>& dependents_in)
-    : id(id_in), key(key_in), nhg_flags(nhg_flags_in), nh_grp_full_list(nh_grp_full_list_in), depends(depends_in), dependents(dependents_in)
+    : id(id_in), key(key_in), type(type_in), nhg_flags(nhg_flags_in), nh_grp_full_list(nh_grp_full_list_in), depends(depends_in), dependents(dependents_in)
 {
 
     FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction started (multi-nexthop) with id: %d, key: %d, nhg_flags: %d", id_in, key_in, nhg_flags_in);

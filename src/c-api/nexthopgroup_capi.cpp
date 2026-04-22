@@ -79,7 +79,7 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
         FIB_LOG(fib::LogLevel::ERROR,"DEBUGME: in sonic fib, cpp_gate memory dump (%zu bytes): %s", len, hex_buf);
 
         /* Call NextHopGroupFull constructor(multi) to create NextHopGroupFull object */
-        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, cpp_gate,
+        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, cpp_gate, c_nhg->type,
                                                    cpp_nh_grp_full_list, cpp_depends, cpp_dependents);
 
         /* Convert C++ Obj to JSON stirng */

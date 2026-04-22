@@ -16,7 +16,7 @@ using namespace fib;
                 const std::vector<nh_grp_full>& nh_grp_full_list_in,
                 const std::vector<uint32_t>& depends_in,
                 const std::vector<uint32_t>& dependents_in)
-    : id(id_in), key(key_in), type(type_in), nhg_flags(nhg_flags_in), nh_grp_full_list(nh_grp_full_list_in), depends(depends_in), dependents(dependents_in)
+    : id(id_in), key(key_in), nhg_flags(nhg_flags_in), type(type_in), nh_grp_full_list(nh_grp_full_list_in), depends(depends_in), dependents(dependents_in)
 {
 
     FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} construction started (multi-nexthop) with id: %d, key: %d, nhg_flags: %d", id_in, key_in, nhg_flags_in);

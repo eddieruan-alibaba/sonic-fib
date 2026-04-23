@@ -65,7 +65,7 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
 
         NextHopGroupFull* cpp_nhg = nullptr;
 
-        if (is_recurisve)) {
+        if (is_recurisve) {
             // Recursive case: includes cpp_gate and type
             fib::g_addr cpp_gate = reinterpret_cast<const fib::g_addr&>(c_nhg->gate);
             cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, cpp_gate,

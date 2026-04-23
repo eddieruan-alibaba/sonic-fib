@@ -33,7 +33,7 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
     }
 
     try {
-        FIB_LOG(fib::LogLevel::DEBUG, "multipaths %d, is_recurisve 0x%x", multipaths, (uint8_t)is_recurisve;
+        FIB_LOG(fib::LogLevel::DEBUG, "multipaths %d, is_recurisve 0x%x", multipaths, (uint8_t)is_recurisve);
         /* Convert C array to C++ vector */
         vector<fib::nh_grp_full> cpp_nh_grp_full_list;
         for (int i = 0; i < (MULTIPATH_NUM * MAX_NHG_RECURSION) + 1; i++) {

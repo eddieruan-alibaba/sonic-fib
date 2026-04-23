@@ -30,9 +30,9 @@ using namespace fib;
         FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] dependents item %d : %d", i, dependents_in[i]);
     }
 
+    // For recursive case, set gate and type
     this->gate = gateway_in;
     this->type = type_in;
-    bh_type = BLACKHOLE_UNSPEC;
     memset(&src, 0, sizeof(src));
     memset(&rmap_src, 0, sizeof(rmap_src));
 

@@ -19,12 +19,13 @@ using NextHopGroupFull = fib::NextHopGroupFull;
 // Declare C-compatible API directly (no need for header here)
 extern "C" {
 
-char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths);
+char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths, bool is_recurisve);
 char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths);
 void nexthopgroup_free(NextHopGroupFull* obj);
 char* nexthopgroup_to_json(NextHopGroupFull* obj);
 
-char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths)
+char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths, 
+                            bool is_recurisve)
 {
     if (!c_nhg) {
         FIB_LOG(fib::LogLevel::ERROR, "Do NOT pass in an empty C_NextHopGroupFull *");
@@ -32,7 +33,7 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
     }
 
     try {
-        FIB_LOG(fib::LogLevel::DEBUG, "multipaths %d", multipaths);
+        FIB_LOG(fib::LogLevel::DEBUG, "multipaths %d, is_recurisve 0x%x", multipaths, (uint8_t)is_recurisve);
         /* Convert C array to C++ vector */
         vector<fib::nh_grp_full> cpp_nh_grp_full_list;
         for (int i = 0; i < (MULTIPATH_NUM * MAX_NHG_RECURSION) + 1; i++) {
@@ -62,9 +63,20 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
             cpp_dependents.push_back(c_nhg->dependents[i]);
         }
 
-        /* Call NextHopGroupFull constructor(multi) to create NextHopGroupFull object */
-        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags,
-                                                   cpp_nh_grp_full_list, cpp_depends, cpp_dependents);
+        NextHopGroupFull* cpp_nhg = nullptr;
+
+        if (is_recurisve) {
+            // Recursive case: includes cpp_gate and type
+            fib::g_addr cpp_gate = reinterpret_cast<const fib::g_addr&>(c_nhg->gate);
+            cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, cpp_gate,
+                                        static_cast<fib::nexthop_types_t>(c_nhg->type),
+                                        cpp_nh_grp_full_list, cpp_depends, cpp_dependents);
+        } else {
+            // Non-recursive, multipath case
+            cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags,
+                                        cpp_nh_grp_full_list, cpp_depends, cpp_dependents);
+        }
+
 
         /* Convert C++ Obj to JSON stirng */
         char* json_str = nexthopgroup_to_json(cpp_nhg);

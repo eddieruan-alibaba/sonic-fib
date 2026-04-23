@@ -61,8 +61,13 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
             }
             cpp_dependents.push_back(c_nhg->dependents[i]);
         }
-        fib::g_addr cpp_gate = reinterpret_cast<const fib::g_addr&>(c_nhg->gate);
+        /* Call NextHopGroupFull constructor(multi) to create NextHopGroupFull object */
+        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, cpp_gate,
+                                                   static_cast<fib::nexthop_types_t>(c_nhg->type),
+                                                   cpp_nh_grp_full_list, cpp_depends, cpp_dependents);
 
+        //DEBUG
+        fib::g_addr cpp_gate = cpp_nhg->gate;
         constexpr size_t len = sizeof(cpp_gate);
         char hex_buf[len * 3 + 1];
         const uint8_t* ptr = reinterpret_cast<const uint8_t*>(&cpp_gate);
@@ -71,21 +76,16 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
         for (size_t i = 0; i < len; ++i) {
             pos += std::snprintf(hex_buf + pos, sizeof(hex_buf) - pos, "%02x ", ptr[i]);
         }
-
         if (pos > 0) {
             hex_buf[pos - 1] = '\0'; // Remove trailing space
         }
 
-        FIB_LOG(fib::LogLevel::ERROR,"DEBUGME: in sonic fib, cpp_gate memory dump (%zu bytes): %s", len, hex_buf);
+        FIB_LOG(fib::LogLevel::ERROR,"DEBUGME: cpp_nhg's gate memory dump (%zu bytes): %s", len, hex_buf);
 
-        /* Call NextHopGroupFull constructor(multi) to create NextHopGroupFull object */
-        NextHopGroupFull* cpp_nhg = new NextHopGroupFull(c_nhg->id, c_nhg->key, c_nhg->nhg_flags, cpp_gate,
-                                                   static_cast<fib::nexthop_types_t>(c_nhg->type),
-                                                   cpp_nh_grp_full_list, cpp_depends, cpp_dependents);
 
         /* Convert C++ Obj to JSON stirng */
         char* json_str = nexthopgroup_to_json(cpp_nhg);
-        FIB_LOG(fib::LogLevel::DEBUG, "json_str length %zu, str: %s",
+        FIB_LOG(fib::LogLevel::ERROR, "json_str length %zu, str: %s",
             json_str ? strlen(json_str) : 0, json_str ? json_str : "null");
 
         nexthopgroup_free(cpp_nhg);

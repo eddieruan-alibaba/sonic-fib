@@ -19,7 +19,7 @@ using NextHopGroupFull = fib::NextHopGroupFull;
 // Declare C-compatible API directly (no need for header here)
 extern "C" {
 
-char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths);
+char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths, bool is_recurisve);
 char* nexthopgroupfull_json_from_c_nhg_singleton(const struct C_NextHopGroupFull* c_nhg, uint16_t multipaths);
 void nexthopgroup_free(NextHopGroupFull* obj);
 char* nexthopgroup_to_json(NextHopGroupFull* obj);

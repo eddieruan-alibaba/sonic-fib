@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "NhtEvent.json",
+  "title": "NhtEvent",
+  "description": "NHT (Next Hop Tracking) event for RNH state change notification between FRR and fpmsyncd",
+  "type": "object",
+  "properties": {
+    "rnh_prefix": {
+      "type": "string",
+      "position": 1,
+      "default_value": "",
+      "description": "Tracked RNH prefix in addr/len format (e.g. 2064:100::1d/128)"
+    },
+    "prev_resolved_prefix": {
+      "type": "string",
+      "position": 1,
+      "default_value": "",
+      "description": "Previous resolving route prefix in addr/len format. 0.0.0.0/0 or ::/0 when unresolved"
+    },
+    "prev_resolved_nhg_id": {
+      "type": "integer",
+      "position": 1,
+      "minimum": 0,
+      "default_value": "0",
+      "description": "Previous resolving NHG identifier. 0 when unresolved"
+    },
+    "curr_resolved_prefix": {
+      "type": "string",
+      "position": 1,
+      "default_value": "",
+      "description": "Current resolving route prefix in addr/len format. 0.0.0.0/0 or ::/0 when unresolved"
+    },
+    "curr_resolved_nhg_id": {
+      "type": "integer",
+      "position": 1,
+      "minimum": 0,
+      "default_value": "0",
+      "description": "Current resolving NHG identifier. 0 when unresolved"
+    }
+  },
+  "required": [
+    "rnh_prefix",
+    "prev_resolved_prefix",
+    "prev_resolved_nhg_id",
+    "curr_resolved_prefix",
+    "curr_resolved_nhg_id"
+  ],
+  "additionalProperties": false
+}

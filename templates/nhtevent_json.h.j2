@@ -1,0 +1,35 @@
+/* DO NOT EDIT -- auto-generated from schema/NhtEvent.json */
+#pragma once
+
+#include "src/nhtevent.h"
+#include <nlohmann/json.hpp>
+#include <string>
+
+namespace fib {
+
+inline std::string to_json_string(const {{ root_struct_name }}& obj) {
+    nlohmann::ordered_json j;
+{%- for field in root_struct.fields %}
+    j["{{ field.name }}"] = obj.{{ field.name }};
+{%- endfor %}
+    return j.dump();
+}
+
+inline {{ root_struct_name }} nhtevent_from_json(const nlohmann::ordered_json& j) {
+    {{ root_struct_name }} obj;
+{%- for field in root_struct.fields %}
+{%- if field.cpp_type == "std::string" %}
+    obj.{{ field.name }} = j.at("{{ field.name }}").get<std::string>();
+{%- elif field.cpp_type == "std::uint32_t" %}
+    obj.{{ field.name }} = j.at("{{ field.name }}").get<std::uint32_t>();
+{%- endif %}
+{%- endfor %}
+    return obj;
+}
+
+inline {{ root_struct_name }} nhtevent_from_json_string(const std::string& json_str) {
+    auto j = nlohmann::ordered_json::parse(json_str);
+    return nhtevent_from_json(j);
+}
+
+} // namespace fib

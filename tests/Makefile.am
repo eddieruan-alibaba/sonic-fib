@@ -11,6 +11,8 @@ tests_tests_SOURCES = tests/c_api_ut.cpp                    \
                       tests/nexthopgroupfull_ut.cpp         \
                       tests/nexthopgroupfull_json_ut.cpp    \
                       tests/nexthopgroup_debug_ut.cpp    \
+                      tests/nhtevent_ut.cpp              \
+                      tests/nhtevent_json_ut.cpp         \
                       tests/main.cpp
 
 tests_tests_CFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CFLAGS_GTEST)

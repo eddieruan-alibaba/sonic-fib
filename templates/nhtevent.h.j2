@@ -1,0 +1,38 @@
+/* DO NOT EDIT -- auto-generated from schema/NhtEvent.json */
+#pragma once
+
+#include <string>
+#include <cstdint>
+
+namespace fib {
+
+struct {{ root_struct_name }} {
+{%- for field in root_struct.fields %}
+    {{ field.cpp_type }} {{ field.name }}{% if field.default_value %} = {{ field.default_value }}{% endif %};
+{%- endfor %}
+
+    // Default constructor
+    {{ root_struct_name }}();
+
+    // Parameterized constructor
+    {{ root_struct_name }}(
+{%- for field in root_struct.fields %}
+        {{ "const " ~ field.cpp_type ~ "&" if field.cpp_type == "std::string" else field.cpp_type }} {{ field.name }}_in{{ "," if not loop.last else "" }}
+{%- endfor %}
+    );
+
+    // Copy constructor
+    {{ root_struct_name }}(const {{ root_struct_name }}& other);
+
+    // Copy assignment operator
+    {{ root_struct_name }}& operator=(const {{ root_struct_name }}& other);
+
+    // Equality operators
+    bool operator==(const {{ root_struct_name }}& other) const;
+    bool operator!=(const {{ root_struct_name }}& other) const;
+
+    // Destructor
+    ~{{ root_struct_name }}() = default;
+};
+
+} // namespace fib

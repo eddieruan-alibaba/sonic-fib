@@ -1,0 +1,19 @@
+/* DO NOT EDIT -- auto-generated from schema/NhtEvent.json */
+#ifndef C_NHTEVENT_H
+#define C_NHTEVENT_H
+
+#include <stdint.h>
+
+#define NHT_PREFIX_MAX_LEN 64
+
+struct {{ root_struct_name }} {
+{%- for field in root_struct.fields %}
+{%- if field.c_type == "char*" %}
+    char {{ field.name }}[NHT_PREFIX_MAX_LEN];
+{%- else %}
+    {{ field.c_type }} {{ field.name }};
+{%- endif %}
+{%- endfor %}
+};
+
+#endif /* C_NHTEVENT_H */

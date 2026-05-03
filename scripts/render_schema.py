@@ -135,7 +135,7 @@ def build_c_root_struct(schema, defs):
             dvalue = prop.get("data_prefix")
             data["data_prefix"] = dvalue
         fields.append(data)
-    name = "C_NextHopGroupFull"
+    name = f"C_{schema.get('title', 'NextHopGroupFull')}"
     return {"name": name, "fields": fields}
 
 
@@ -321,21 +321,32 @@ def main():
     env = Environment(loader=FileSystemLoader(template_dir))
     template_name = None
 
+    # Derive template prefix from schema title
+    schema_title = schema.get("title", "NextHopGroupFull")
+    # Map title to template filename prefix
+    template_prefix_map = {
+        "NextHopGroupFull": "nexthopgroupfull",
+        "NhtEvent": "nhtevent",
+    }
+    tpl_prefix = template_prefix_map.get(schema_title, schema_title.lower())
+
     if mode == "header":
-        template_name = "nexthopgroupfull.h.j2"
+        template_name = f"{tpl_prefix}.h.j2"
         context = {
             "enums": enums,
             "structs": all_structs,
             "special_structs": special_structs,
-            "root_struct_name": root_struct_name
+            "root_struct_name": root_struct_name,
+            "root_struct": root_struct
         }
     elif mode == "source":
-        template_name = "nexthopgroupfull.cpp.j2"
+        template_name = f"{tpl_prefix}.cpp.j2"
         context = {
-            "root_struct_name": root_struct_name
+            "root_struct_name": root_struct_name,
+            "root_struct": root_struct
         }
     elif mode == "json_bindings":
-        template_name = "nexthopgroupfull_json.h.j2"
+        template_name = f"{tpl_prefix}_json.h.j2"
         context = {
             "enums": enums,  # dict: name -> list of strings (e.g., ["NEXTHOP_TYPE_INVALID", ...])
             "root_struct_name": root_struct_name,
@@ -344,7 +355,7 @@ def main():
             "all_structs": all_structs
         }
     elif mode == "c_header":
-        template_name = "c_nexthopgroupfull.h.j2"
+        template_name = f"c_{tpl_prefix}.h.j2"
         context = {
             "c_enums": c_enums,
             "structs": c_all_structs,

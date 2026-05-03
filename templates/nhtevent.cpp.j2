@@ -1,0 +1,56 @@
+/* DO NOT EDIT -- auto-generated from schema/NhtEvent.json */
+#include "src/nhtevent.h"
+
+namespace fib {
+
+// Default constructor
+{{ root_struct_name }}::{{ root_struct_name }}()
+{%- for field in root_struct.fields %}
+    {{ ": " if loop.first else ", " }}{{ field.name }}({% if field.cpp_type == "std::string" %}""{% else %}0{% endif %})
+{%- endfor %}
+{
+}
+
+// Parameterized constructor
+{{ root_struct_name }}::{{ root_struct_name }}(
+{%- for field in root_struct.fields %}
+    {{ "const " ~ field.cpp_type ~ "&" if field.cpp_type == "std::string" else field.cpp_type }} {{ field.name }}_in{{ "," if not loop.last else "" }}
+{%- endfor %}
+)
+{%- for field in root_struct.fields %}
+    {{ ": " if loop.first else ", " }}{{ field.name }}({{ field.name }}_in)
+{%- endfor %}
+{
+}
+
+// Copy constructor
+{{ root_struct_name }}::{{ root_struct_name }}(const {{ root_struct_name }}& other)
+{%- for field in root_struct.fields %}
+    {{ ": " if loop.first else ", " }}{{ field.name }}(other.{{ field.name }})
+{%- endfor %}
+{
+}
+
+// Copy assignment operator
+{{ root_struct_name }}& {{ root_struct_name }}::operator=(const {{ root_struct_name }}& other)
+{
+    if (this != &other) {
+{%- for field in root_struct.fields %}
+        {{ field.name }} = other.{{ field.name }};
+{%- endfor %}
+    }
+    return *this;
+}
+
+// Equality operator
+bool {{ root_struct_name }}::operator==(const {{ root_struct_name }}& other) const
+{
+    return {% for field in root_struct.fields %}{{ field.name }} == other.{{ field.name }}{{ " &&\n           " if not loop.last else "" }}{% endfor %};
+}
+
+bool {{ root_struct_name }}::operator!=(const {{ root_struct_name }}& other) const
+{
+    return !(*this == other);
+}
+
+} // namespace fib

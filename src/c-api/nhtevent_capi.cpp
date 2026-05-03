@@ -2,7 +2,6 @@
 
 #include "src/nhtevent.h"
 #include "src/nhtevent_json.h"
-#include "src/c_nhtevent.h"
 #include "src/nexthopgroup_debug.h"
 #include <cstdlib>
 #include <cstring>
@@ -13,21 +12,25 @@ using NhtEvent = fib::NhtEvent;
 
 extern "C" {
 
-char* nhtevent_json_from_c_nht(const struct C_NhtEvent* c_nht)
+char* nhtevent_json_from_c_nht(const char* rnh_prefix,
+                               const char* prev_resolved_prefix,
+                               uint32_t prev_resolved_nhg_id,
+                               const char* curr_resolved_prefix,
+                               uint32_t curr_resolved_nhg_id)
 {
-    if (!c_nht) {
-        FIB_LOG(fib::LogLevel::ERROR, "Do NOT pass in an empty C_NhtEvent *");
+    if (!rnh_prefix || !prev_resolved_prefix || !curr_resolved_prefix) {
+        FIB_LOG(fib::LogLevel::ERROR, "Do NOT pass in NULL prefix strings");
         return nullptr;
     }
 
     try {
-        /* Convert C_NhtEvent to C++ NhtEvent */
+        /* Convert to C++ NhtEvent */
         NhtEvent cpp_nht(
-            std::string(c_nht->rnh_prefix),
-            std::string(c_nht->prev_resolved_prefix),
-            c_nht->prev_resolved_nhg_id,
-            std::string(c_nht->curr_resolved_prefix),
-            c_nht->curr_resolved_nhg_id
+            std::string(rnh_prefix),
+            std::string(prev_resolved_prefix),
+            prev_resolved_nhg_id,
+            std::string(curr_resolved_prefix),
+            curr_resolved_nhg_id
         );
 
         /* Serialize to JSON string */

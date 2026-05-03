@@ -4,7 +4,6 @@
 
 #include "src/nhtevent.h"
 #include "src/nhtevent_json.h"
-#include "src/c_nhtevent.h"
 #include "src/c-api/nhtevent_capi.h"
 
 using namespace std;
@@ -86,16 +85,13 @@ TEST(NhtEventCAPI, basic)
 {
     cout << "TEST_NhtEventCAPI::basic started:" << endl;
 
-    /* Prepare a C_NhtEvent */
-    C_NhtEvent c_nht = {};
-    strncpy(c_nht.rnh_prefix, "2064:100::1d/128", NHT_PREFIX_MAX_LEN - 1);
-    strncpy(c_nht.prev_resolved_prefix, "10.0.0.0/8", NHT_PREFIX_MAX_LEN - 1);
-    c_nht.prev_resolved_nhg_id = 266;
-    strncpy(c_nht.curr_resolved_prefix, "10.0.1.0/24", NHT_PREFIX_MAX_LEN - 1);
-    c_nht.curr_resolved_nhg_id = 270;
-
-    /* Call C API */
-    char* json_str = nhtevent_json_from_c_nht(&c_nht);
+    /* Call C API with individual fields */
+    char* json_str = nhtevent_json_from_c_nht(
+        "2064:100::1d/128",
+        "10.0.0.0/8",
+        266,
+        "10.0.1.0/24",
+        270);
     ASSERT_NE(json_str, nullptr) << "[ERROR] C-API returned nullptr";
 
     cout << "    [DEBUG] JSON: " << json_str << endl;
@@ -119,7 +115,7 @@ TEST(NhtEventCAPI, null_input)
 {
     cout << "TEST_NhtEventCAPI::null_input started:" << endl;
 
-    char* json_str = nhtevent_json_from_c_nht(nullptr);
+    char* json_str = nhtevent_json_from_c_nht(nullptr, "10.0.0.0/8", 0, "10.0.1.0/24", 0);
     EXPECT_EQ(json_str, nullptr);
 
     cout << "TEST_NhtEventCAPI::null_input finished." << endl;

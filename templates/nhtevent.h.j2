@@ -1,0 +1,16 @@
+// Auto-generated from JSON Schema. DO NOT EDIT.
+#pragma once
+
+#include <string>
+#include <cstdint>
+
+namespace fib {
+
+    /* --- Struct: {{ root_struct_name }} --- */
+    struct {{ root_struct_name }} {
+{%- for field in structs[root_struct_name].fields %}
+        {{ field.cpp_type }} {{ field.name }}{% if field.default_value %} = {{ field.default_value }}{% endif %};
+{%- endfor %}
+    };
+
+} // namespace fib

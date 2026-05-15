@@ -3,10 +3,15 @@
 BUILT_SOURCES = src/nexthopgroupfull.h \
                 src/nexthopgroupfull.cpp \
                 src/nexthopgroupfull_json.h \
-                src/c_nexthopgroupfull.h
+                src/c_nexthopgroupfull.h \
+                src/nhtevent.h \
+                src/nhtevent.cpp \
+                src/nhtevent_json.h \
+                src/c_nhtevent.h
 
 # Common dependencies
 schema_file = $(top_srcdir)/schema/NextHopGroupFull.json
+nhtevent_schema_file = $(top_srcdir)/schema/NhtEvent.json
 render_script = $(top_srcdir)/scripts/render_schema.py
 
 # Header file for nexthopgroupfull.h
@@ -49,17 +54,66 @@ src/c_nexthopgroupfull.h: $(top_srcdir)/templates/c_nexthopgroupfull.h.j2 \
 		$@ \
 		c_header
 
+# NhtEvent header file
+src/nhtevent.h: $(top_srcdir)/templates/nhtevent.h.j2 \
+                $(nhtevent_schema_file) \
+                $(render_script)
+	$(AM_V_GEN)$(PYTHON) $(render_script) \
+		$(nhtevent_schema_file) \
+		$(top_srcdir)/templates \
+		$@ \
+		header
+
+# NhtEvent implementation file
+src/nhtevent.cpp: $(top_srcdir)/templates/nhtevent.cpp.j2 \
+                  $(nhtevent_schema_file) \
+                  $(render_script)
+	$(AM_V_GEN)$(PYTHON) $(render_script) \
+		$(nhtevent_schema_file) \
+		$(top_srcdir)/templates \
+		$@ \
+		source
+
+# NhtEvent JSON bindings
+src/nhtevent_json.h: $(top_srcdir)/templates/nhtevent_json.h.j2 \
+                     $(nhtevent_schema_file) \
+                     $(render_script)
+	$(AM_V_GEN)$(PYTHON) $(render_script) \
+		$(nhtevent_schema_file) \
+		$(top_srcdir)/templates \
+		$@ \
+		json_bindings
+
+# NhtEvent C header
+src/c_nhtevent.h: $(top_srcdir)/templates/c_nhtevent.h.j2 \
+                  $(nhtevent_schema_file) \
+                  $(render_script)
+	$(AM_V_GEN)$(PYTHON) $(render_script) \
+		$(nhtevent_schema_file) \
+		$(top_srcdir)/templates \
+		$@ \
+		c_header
+
 CLEANFILES = src/nexthopgroupfull.h \
              src/nexthopgroupfull.cpp \
              src/nexthopgroupfull_json.h \
-             src/c_nexthopgroupfull.h
+             src/c_nexthopgroupfull.h \
+             src/nhtevent.h \
+             src/nhtevent.cpp \
+             src/nhtevent_json.h \
+             src/c_nhtevent.h
 
 EXTRA_DIST = \
     templates/nexthopgroup/nexthopgroupfull.h.j2 \
     templates/nexthopgroup/nexthopgroupfull.cpp.j2 \
     templates/nexthopgroup/nexthopgroupfull_json.h.j2 \
     templates/nexthopgroup/c_nexthopgroupfull.h.j2 \
-    schema/nexthopgroup/NextHopGroupFull.json
+    templates/nhtevent.h.j2 \
+    templates/nhtevent.cpp.j2 \
+    templates/nhtevent_json.h.j2 \
+    templates/c_nhtevent.h.j2 \
+    schema/nexthopgroup/NextHopGroupFull.json \
+    schema/NhtEvent.json
 
 # End of Jinja2 generated part
 
@@ -67,8 +121,10 @@ lib_LTLIBRARIES += src/libnexthopgroup.la
 
 src_libnexthopgroup_la_SOURCES = \
     src/nexthopgroupfull.cpp      \
+    src/nhtevent.cpp              \
     src/nexthopgroup_debug.cpp    \
-    src/c-api/nexthopgroup_capi.cpp
+    src/c-api/nexthopgroup_capi.cpp \
+    src/c-api/nhtevent_capi.cpp
 
 # Install headers to a dedicated subdir
 nexthopgroup_headerdir = $(includedir)/nexthopgroup
@@ -76,12 +132,16 @@ nexthopgroup_header_HEADERS = \
     src/nexthopgroupfull.h \
     src/nexthopgroupfull_json.h \
     src/nexthopgroup_debug.h \
-    src/c_nexthopgroupfull.h
+    src/c_nexthopgroupfull.h \
+    src/nhtevent.h \
+    src/nhtevent_json.h \
+    src/c_nhtevent.h
 
 # Install C-API headers
 nexthopgroup_capi_headerdir = $(includedir)/nexthopgroup/c-api
 nexthopgroup_capi_header_HEADERS = \
-    src/c-api/nexthopgroup_capi.h
+    src/c-api/nexthopgroup_capi.h \
+    src/c-api/nhtevent_capi.h
 
 src_libnexthopgroup_la_CXXFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CODE_COVERAGE_CXXFLAGS)
 src_libnexthopgroup_la_CPPFLAGS = $(DBGFLAGS) $(AM_CFLAGS) $(CFLAGS_COMMON) $(CODE_COVERAGE_CPPFLAGS)

@@ -1,0 +1,35 @@
+// Auto-generated from JSON Schema. DO NOT EDIT.
+#pragma once
+
+#include "nhtevent.h"
+#include <nlohmann/json.hpp>
+#include <string>
+
+namespace fib {
+
+// --- {{ root_struct_name }} to_json / from_json ---
+inline void to_json(nlohmann::ordered_json& j, const {{ root_struct_name }}& obj) {
+    j = nlohmann::ordered_json{
+        {%- for field in root_struct.fields %}
+        {"{{ field.name }}", obj.{{ field.name }}},
+        {%- endfor %}
+    };
+}
+
+inline void from_json(const nlohmann::ordered_json& j, {{ root_struct_name }}& obj) {
+    {%- for field in root_struct.fields %}
+    j.at("{{ field.name }}").get_to(obj.{{ field.name }});
+    {%- endfor %}
+}
+
+// --- Top-level string helpers ---
+inline std::string nhtevent_to_json_string(const {{ root_struct_name }}& obj) {
+    return nlohmann::ordered_json(obj).dump();
+}
+
+inline {{ root_struct_name }} nhtevent_from_json_string(const std::string& json_str) {
+    auto j = nlohmann::ordered_json::parse(json_str);
+    return j.get<{{ root_struct_name }}>();
+}
+
+} // namespace fib

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "NhtEvent.json",
+  "title": "NhtEvent",
+  "description": "NHT (Nexthop Tracking) event from FRR zebra to fpmsyncd",
+  "type": "object",
+  "properties": {
+    "rnh_prefix": {
+      "type": "string",
+      "position": 1,
+      "default_value": "\"\"",
+      "description": "Tracked RNH prefix (e.g. fc06::2/128)"
+    },
+    "prev_resolved_prefix": {
+      "type": "string",
+      "position": 1,
+      "default_value": "\"\"",
+      "description": "Previously resolved route prefix"
+    },
+    "prev_resolved_nhg_id": {
+      "type": "integer",
+      "position": 1,
+      "minimum": 0,
+      "default_value": "0",
+      "description": "Previously resolved NHG ID"
+    },
+    "curr_resolved_prefix": {
+      "type": "string",
+      "position": 1,
+      "default_value": "\"\"",
+      "description": "Currently resolved route prefix"
+    },
+    "curr_resolved_nhg_id": {
+      "type": "integer",
+      "position": 1,
+      "minimum": 0,
+      "default_value": "0",
+      "description": "Currently resolved NHG ID (0 = unreachable)"
+    }
+  }
+}

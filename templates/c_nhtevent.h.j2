@@ -1,0 +1,29 @@
+// Auto-generated from JSON Schema. DO NOT EDIT.
+#ifndef C_NHTEVENT_H
+#define C_NHTEVENT_H
+
+#include <stdint.h>
+#include <stdbool.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define NHT_PREFIX_MAXLEN 64
+
+/* --- Root Struct: {{ root_struct_name }} --- */
+struct {{ root_struct_name }} {
+{%- for field in root_struct.fields %}
+{%- if field.c_type == "char*" %}
+    char {{ field.name }}[NHT_PREFIX_MAXLEN];
+{%- else %}
+    {{ field.c_type }} {{ field.name }};
+{%- endif %}
+{%- endfor %}
+};
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* C_NHTEVENT_H */

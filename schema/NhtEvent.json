@@ -37,5 +37,13 @@
       "default_value": "0",
       "description": "Currently resolved NHG ID (0 = unreachable)"
     }
-  }
+  },
+  "required": [
+    "rnh_prefix",
+    "prev_resolved_prefix",
+    "prev_resolved_nhg_id",
+    "curr_resolved_prefix",
+    "curr_resolved_nhg_id"
+  ],
+  "additionalProperties": false
 }

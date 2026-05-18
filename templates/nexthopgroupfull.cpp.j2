@@ -204,10 +204,15 @@ using namespace fib;
 
     /* Deep copy for nh_srv6 information */
     if (nh_srv6 != nullptr) {
-        delete nh_srv6;
+        if (nh_srv6->seg6_segs != nullptr) {
+            free(nh_srv6->seg6_segs);
+        }
+        free(nh_srv6);
+        nh_srv6 = nullptr;
     }
     if (other.nh_srv6 != nullptr) {
-        nh_srv6 = new nexthop_srv6();
+        nh_srv6 = static_cast<nexthop_srv6*>(malloc(sizeof(nexthop_srv6)));
+        memset(nh_srv6, 0, sizeof(nexthop_srv6));
 
         nh_srv6->seg6local_action = other.nh_srv6->seg6local_action;
         nh_srv6->seg6local_ctx = other.nh_srv6->seg6local_ctx;

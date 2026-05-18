@@ -21,7 +21,7 @@ LoggerState& getState() {
 
 // Default fallback: print to stderr
 void defaultLog(LogLevel level, const char* file, int line,
-                const char* func, const char* format, ...) {
+                const char* func, const char* format, va_list args) {
     const char* level_str = "DEBUG";
     switch (level) {
         case LogLevel::INFO:  level_str = "INFO";  break;
@@ -31,10 +31,7 @@ void defaultLog(LogLevel level, const char* file, int line,
     }
    // Format the variadic arguments into a buffer
     std::array<char, 1024> buf;
-    va_list args;
-    va_start(args, format);
     int written = std::vsnprintf(buf.data(), buf.size(), format, args);
-    va_end(args);
 
     if (written < 0) {
         // Formatting error – log minimal fallback

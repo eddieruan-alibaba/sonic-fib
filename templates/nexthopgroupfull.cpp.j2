@@ -175,8 +175,7 @@ using namespace fib;
 /* Copy Assignment Operator */
 {{ root_struct_name }}& {{ root_struct_name }}::operator = (const NextHopGroupFull &other)
 {
-    FIB_LOG(fib::LogLevel::DEBUG,  "[CPP DEBUG] NextHopGroupFull copy assignment operator started for id: %d ", other.id,
-            ", key: %x", other.key, ", nhg_flags: %x ", other.nhg_flags);
+    FIB_LOG(fib::LogLevel::DEBUG,  "[CPP DEBUG] NextHopGroupFull copy assignment operator started for id: %d, key: 0x%x, nhg_flags: 0x%x", other.id, other.key, other.nhg_flags);
 
     if (this == &other)     return *this;
 
@@ -239,7 +238,7 @@ using namespace fib;
 /* operator == */
 bool {{ root_struct_name }}::operator==(const {{ root_struct_name }}& other) const
 {
-    FIB_LOG(fib::LogLevel::DEBUG,  "[CPP DEBUG] {{ root_struct_name }} operator == started for [id: %d", id, "] vs [id: %d", other.id, "]");
+    FIB_LOG(fib::LogLevel::DEBUG,  "[CPP DEBUG] {{ root_struct_name }} operator == started for id: %d vs id: %d", id, other.id);
 
     /* Compare plain values */
     if (id != other.id ||
@@ -340,8 +339,7 @@ bool {{ root_struct_name }}::operator==(const {{ root_struct_name }}& other) con
 
 /* operator != */
 bool {{ root_struct_name }}::operator!=(const {{ root_struct_name }}& other) const {
-    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} operator != started for [id: %d",
-        id, "] vs [id: %d", other.id , "], calling operator ==");
+    FIB_LOG(fib::LogLevel::DEBUG, "[CPP DEBUG] {{ root_struct_name }} operator != started for id: %d vs id: %d, calling operator ==", id, other.id);
     return !(*this == other);
 }
 

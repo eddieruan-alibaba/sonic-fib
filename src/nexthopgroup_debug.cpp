@@ -87,8 +87,10 @@ void fib::internalLog(LogLevel level, const char* file, int line,
     va_start(args, format);
     {
         std::lock_guard<std::mutex> lock(state.mutex);
-        if (static_cast<int>(level) < static_cast<int>(state.level) )
+        if (static_cast<int>(level) < static_cast<int>(state.level) ) {
+            va_end(args);
             return;
+        }
         if (!state.callback) {
             // Use default logger
             cb = defaultLog;

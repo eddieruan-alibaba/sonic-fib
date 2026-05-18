@@ -30,6 +30,16 @@ char* nexthopgroupfull_json_from_c_nhg_multi(const struct C_NextHopGroupFull* c_
     try {
         FIB_LOG(fib::LogLevel::DEBUG, "nh_grp_full_count %d, depends_count %d, dependents_count %d, is_recurisve 0x%x",
             nh_grp_full_count, depends_count, dependents_count, (uint8_t)is_recurisve);
+
+        /* Defensive bounds check on array count parameters */
+        if (nh_grp_full_count > (MULTIPATH_NUM * MAX_NHG_RECURSION) + 1 ||
+            depends_count > MULTIPATH_NUM + 1 ||
+            dependents_count > MULTIPATH_NUM + 1) {
+            FIB_LOG(fib::LogLevel::ERROR, "Count exceeds array bounds: nh_grp_full_count=%u, depends_count=%u, dependents_count=%u",
+                nh_grp_full_count, depends_count, dependents_count);
+            return nullptr;
+        }
+
         /* Convert C array to C++ vector */
         vector<fib::nh_grp_full> cpp_nh_grp_full_list;
         for (uint32_t i = 0; i < nh_grp_full_count; i++) {

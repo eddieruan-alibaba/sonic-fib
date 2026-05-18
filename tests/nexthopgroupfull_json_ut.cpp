@@ -334,7 +334,7 @@ TEST(StructToFromJson, seg6_seg_stack_ptr)
     cout << "    " << j.dump(4) << endl;
     /* Check the values of constructed JSON */
     EXPECT_EQ(j["encap_behavior"], "SRV6_HEADEND_BEHAVIOR_H_ENCAPS");
-    auto j_segs_out = j["segs"].get<std::vector<std::string>>();
+    auto j_segs_out = j["seg"].get<std::vector<std::string>>();
     EXPECT_EQ(j["num_segs"], test_val->num_segs);
     EXPECT_EQ(j_segs_out.size(), 2);
     EXPECT_EQ(j_segs_out[0], "2001:db8::1");
@@ -424,7 +424,7 @@ TEST(StructToFromJson, nexthop_srv6_ptr)
     // seg6_seg_stack *
     EXPECT_EQ(j["seg6_segs"]["encap_behavior"], "SRV6_HEADEND_BEHAVIOR_H_INSERT");
     EXPECT_EQ(j["seg6_segs"]["num_segs"], 2);
-    auto j_segs_out = j["seg6_segs"]["segs"].get<std::vector<std::string>>();
+    auto j_segs_out = j["seg6_segs"]["seg"].get<std::vector<std::string>>();
     EXPECT_EQ(j_segs_out.size(), 2);
     EXPECT_EQ(j_segs_out[0], "2001:db8::1");
     EXPECT_EQ(j_segs_out[1], "2001:db8::2");
@@ -670,7 +670,7 @@ TEST(StructToFromJson, NextHopGroupFull_singleton)
     EXPECT_EQ(j["nh_srv6"]["seg6local_ctx"]["argument_len"], test_val.nh_srv6->seg6local_ctx.argument_len);
     // Check nh_srv6->seg6_segs
     EXPECT_EQ(j["nh_srv6"]["seg6_segs"]["encap_behavior"], "SRV6_HEADEND_BEHAVIOR_H_ENCAPS");
-    auto j_segs_out = j["nh_srv6"]["seg6_segs"]["segs"].get<std::vector<std::string>>();
+    auto j_segs_out = j["nh_srv6"]["seg6_segs"]["seg"].get<std::vector<std::string>>();
     EXPECT_EQ(j["nh_srv6"]["seg6_segs"]["num_segs"], test_val.nh_srv6->seg6_segs->num_segs);
     EXPECT_EQ(j_segs_out.size(), 3);
     EXPECT_EQ(j_segs_out[0], "2001:db8:1::1");

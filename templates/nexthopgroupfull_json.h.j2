@@ -111,7 +111,7 @@ inline void to_json(nlohmann::ordered_json& j, const seg6_seg_stack* stack) {
     j = nlohmann::ordered_json{
         {"encap_behavior", stack->encap_behavior},
         {"num_segs", stack->num_segs},
-        {"segs", segs}
+        {"seg", segs}
     };
 }
 inline void from_json(const nlohmann::ordered_json& j, seg6_seg_stack*& stack) {
@@ -120,7 +120,7 @@ inline void from_json(const nlohmann::ordered_json& j, seg6_seg_stack*& stack) {
         return;
     }
     auto behavior = j.at("encap_behavior").get<srv6_headend_behavior>();
-    auto segs = j.at("segs").get<std::vector<std::string>>();
+    auto segs = j.at("seg").get<std::vector<std::string>>();
     size_t total = sizeof(seg6_seg_stack) + segs.size() * sizeof(in6_addr);
     stack = static_cast<seg6_seg_stack*>(malloc(total));
     if (!stack) return;

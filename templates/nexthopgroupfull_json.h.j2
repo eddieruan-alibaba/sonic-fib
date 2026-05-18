@@ -150,7 +150,7 @@ inline void from_json(const nlohmann::ordered_json& j, nexthop_srv6*& srv6) {
         return;
     }
     srv6 = static_cast<nexthop_srv6*>(malloc(sizeof(nexthop_srv6)));
-    memset(srv6, 0, sizeof(nexthop_srv6));
+    *srv6 = nexthop_srv6();
     j.at("seg6local_action").get_to(srv6->seg6local_action);
     j.at("seg6local_ctx").get_to(srv6->seg6local_ctx);
     j.at("seg6_segs").get_to(srv6->seg6_segs);
